@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constructor de Módulos | Canvas LMS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0066cc;--primary-dark:#004a99;--primary-light:#e8f0fb;
+  --success:#10b981;--success-light:#ecfdf5;
+  --danger:#ef4444;--danger-light:#fef2f2;
+  --warning:#f59e0b;--warning-light:#fffbeb;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-400:#94a3b8;--gray-500:#64748b;--gray-700:#334155;--gray-900:#0f172a;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 12px rgba(0,0,0,.1);
+}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--gray-50);color:var(--gray-900);font-size:14px;line-height:1.5}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 24px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100;height:56px}
+.nav-brand{font-size:15px;font-weight:700;color:var(--primary);margin-right:32px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.nav-brand span{font-size:20px}
+.nav-tabs{display:flex;gap:0;height:100%}
+.nav-tab{padding:0 20px;height:100%;border:none;background:none;font-size:13px;font-weight:500;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;white-space:nowrap}
+.nav-tab:hover{color:var(--gray-700)}
+.nav-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.nav-status{margin-left:auto;display:flex;align-items:center;gap:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--gray-300)}
+.status-dot.connected{background:var(--success)}
+.status-text{font-size:12px;color:var(--gray-500)}
+
+/* LAYOUT */
+.container{max-width:960px;margin:0 auto;padding:32px 24px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:18px}
+
+/* FORMS */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field textarea,.field select{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--gray-900);background:#fff;transition:border-color .2s}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.field textarea{resize:vertical;min-height:80px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-700);font-family:inherit;transition:all .2s;white-space:nowrap}
+.btn:hover{background:var(--gray-50);border-color:var(--gray-300)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn-success:hover{background:#059669}
+.btn-danger{color:var(--danger);border-color:var(--gray-200)}
+.btn-danger:hover{background:var(--danger-light);border-color:var(--danger)}
+.btn-sm{padding:6px 10px;font-size:12px}
+.btn-icon{padding:7px;border-radius:var(--radius-sm)}
+.btn-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-group.right{justify-content:flex-end}
+.btn-group.between{justify-content:space-between}
+
+/* ALERTS */
+.alert{padding:12px 16px;border-radius:var(--radius-md);font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-success{background:var(--success-light);border:1px solid #a7f3d0;color:#065f46}
+.alert-danger{background:var(--danger-light);border:1px solid #fca5a5;color:#991b1b}
+.alert-warning{background:var(--warning-light);border:1px solid #fde68a;color:#92400e}
+.alert-info{background:var(--primary-light);border:1px solid #bfdbfe;color:#1e40af}
+
+/* SECTIONS BUILDER */
+.section-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.section-type-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border:1.5px dashed var(--gray-200);border-radius:var(--radius-md);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray-500);font-family:inherit;transition:all .2s}
+.section-type-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.section-type-btn .type-icon{font-size:24px}
+
+.section-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden}
+.section-card-header{padding:14px 18px;display:flex;align-items:center;gap:12px;background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
+.section-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-lectura{background:#dbeafe;color:#1e40af}
+.badge-recurso{background:#d1fae5;color:#065f46}
+.badge-quiz{background:#fef3c7;color:#92400e}
+.badge-referencias{background:#f3f4f6;color:#374151}
+.section-card-body{padding:18px}
+.section-num{width:28px;height:28px;border-radius:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-label{font-size:13px;font-weight:600;color:var(--gray-700);flex:1}
+
+/* QUESTIONS */
+.q-item{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px;margin-bottom:8px}
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px}
+.opts-list{display:flex;flex-direction:column;gap:6px}
+.opt-row{display:flex;align-items:center;gap:8px}
+.opt-row input[type=radio]{accent-color:var(--primary);width:16px;height:16px;flex-shrink:0}
+.opt-row input[type=text]{flex:1;padding:7px 10px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:12px;font-family:inherit}
+.add-opt-btn{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;font-weight:500}
+.add-opt-btn:hover{text-decoration:underline}
+
+/* REFS */
+.ref-item{display:flex;gap:8px;margin-bottom:6px}
+.ref-item input{flex:1}
+
+/* STEPS */
+.steps{display:flex;gap:0;margin-bottom:24px;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden}
+.step-item{flex:1;padding:12px;text-align:center;font-size:12px;font-weight:500;color:var(--gray-400);border-right:1px solid var(--gray-200);cursor:pointer;transition:all .2s}
+.step-item:last-child{border-right:none}
+.step-item.active{background:var(--primary-light);color:var(--primary)}
+.step-item.done{color:var(--success)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--gray-200);color:var(--gray-500);font-size:10px;margin-right:6px;font-weight:700}
+.step-item.active .step-num{background:var(--primary);color:#fff}
+.step-item.done .step-num{background:var(--success);color:#fff}
+
+/* ADMIN */
+.modules-grid{display:grid;gap:12px}
+.module-item{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px}
+.module-item-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.module-item-title{font-size:15px;font-weight:600;color:var(--gray-900)}
+.module-item-meta{font-size:12px;color:var(--gray-400);margin-top:2px}
+.module-num-badge{background:var(--primary);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.iframe-code{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Courier New',monospace;font-size:11px;color:var(--gray-700);word-break:break-all;line-height:1.6;margin:8px 0}
+.module-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-400)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+/* LOADING */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--gray-200);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;font-size:14px;color:var(--gray-500)}
+.loading-overlay.hidden{display:none}
+
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--gray-200);margin:20px 0}
+.section-heading{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);margin-bottom:14px}
+
+/* CODE OUTPUT */
+.code-block{background:var(--gray-900);color:#a5f3fc;border-radius:var(--radius-md);padding:16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;overflow-x:auto;word-break:break-all}
+
+/* PUBLISH RESULT */
+.publish-result{background:var(--success-light);border:1px solid #6ee7b7;border-radius:var(--radius-lg);padding:20px;margin-top:16px}
+.publish-result-title{font-size:15px;font-weight:700;color:#065f46;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.url-display{background:#fff;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;color:var(--primary);word-break:break-all;margin:6px 0}
+
+/* COLOR PREVIEW */
+.color-preview{width:28px;height:28px;border-radius:4px;border:1px solid var(--gray-200);display:inline-block;vertical-align:middle;margin-left:6px}
+
+@media(max-width:640px){
+  .section-type-grid{grid-template-columns:repeat(2,1fr)}
+  .row-2,.row-3{grid-template-columns:1fr}
+  .nav-tab{padding:0 12px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div>
+  <span id="loadingText">Publicando módulo...</span>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="nav-brand"><span>🎓</span> Constructor Canvas</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('config')" id="tab-btn-config">⚙️ Configuración</button>
+    <button class="nav-tab" onclick="showTab('builder')" id="tab-btn-builder">🔨 Constructor</button>
+    <button class="nav-tab" onclick="showTab('admin')" id="tab-btn-admin">📚 Mis módulos</button>
+  </div>
+  <div class="nav-status">
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-text" id="statusText">Sin configurar</span>
+  </div>
+</nav>
+
+<!-- ============ TAB: CONFIGURACIÓN ============ -->
+<div class="tab-panel active" id="panel-config">
+<div class="container">
+
+  <div id="configAlerts"></div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔑</span> Credenciales de GitHub</div>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>Necesitas un <strong>Personal Access Token</strong> de GitHub con permisos de <code>repo</code> (Contents: Read & Write). 
+      <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--primary)">Generar token aquí →</a></div>
+    </div>
+    <div class="row-3">
+      <div class="field">
+        <label>Usuario de GitHub</label>
+        <input type="text" id="cfg-owner" placeholder="thecesarchavezv">
+      </div>
+      <div class="field">
+        <label>Repositorio</label>
+        <input type="text" id="cfg-repo" placeholder="canvas-modules">
+      </div>
+      <div class="field">
+        <label>Personal Access Token</label>
+        <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxx">
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Guardar y verificar</button>
+      <button class="btn" onclick="clearConfig()">🗑️ Limpiar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🌐</span> URL de GitHub Pages</div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Tus módulos publicados estarán disponibles en:</p>
+    <div class="url-display" id="ghPagesUrl">https://[usuario].github.io/[repositorio]/</div>
+    <p style="font-size:12px;color:var(--gray-400);margin-top:8px">⚠️ Asegúrate de tener GitHub Pages activado en tu repositorio (Settings → Pages → Branch: main)</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏛️</span> Configuración de Canvas</div>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>Para que los iframes de GitHub Pages funcionen en Canvas, el administrador de tu institución debe agregar <code>[usuario].github.io</code> a la lista de dominios permitidos en <strong>Admin → Settings → Allowed Domains</strong>.</div>
+    </div>
+    <p style="font-size:13px;color:var(--gray-500)">Si no tienes acceso de administrador, contacta al equipo de TI de tu institución.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ TAB: CONSTRUCTOR ============ -->
+<div class="tab-panel" id="panel-builder">
+<div class="container">
+
+  <div id="builderAlerts"></div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step-item active" id="step-1" onclick="goBuilderStep(1)"><span class="step-num">1</span>Datos del módulo</div>
+    <div class="step-item" id="step-2" onclick="goBuilderStep(2)"><span class="step-num">2</span>Secciones</div>
+    <div class="step-item" id="step-3" onclick="goBuilderStep(3)"><span class="step-num">3</span>Publicar</div>
+  </div>
+
+  <!-- PASO 1: Datos del módulo -->
+  <div id="builder-step-1">
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> Información del módulo</div>
+      <div class="row-3">
+        <div class="field">
+          <label>Número de módulo</label>
+          <input type="number" id="mod-num" value="1" min="1">
+        </div>
+        <div class="field">
+          <label>Color principal</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="text" id="mod-color" value="#0066cc" placeholder="#0066cc" style="flex:1" oninput="updateColorPreview()">
+            <input type="color" id="mod-color-picker" value="#0066cc" onchange="syncColor()" style="width:36px;height:36px;padding:2px;border-radius:4px;cursor:pointer;border:1px solid var(--gray-200)">
+          </div>
+        </div>
+        <div class="field">
+          <label>Creado por</label>
+          <input type="text" id="mod-author" placeholder="Nombre del autor">
+        </div>
+      </div>
+      <div class="field">
+        <label>Título del módulo</label>
+        <input type="text" id="mod-title" placeholder="Ej: Modelos de Negocios">
+      </div>
+      <div class="field">
+        <label>Descripción breve</label>
+        <textarea id="mod-desc" rows="2" placeholder="Descripción general del módulo y sus objetivos de aprendizaje..."></textarea>
+      </div>
+      <div class="field">
+        <label>Nota de pie de página</label>
+        <input type="text" id="mod-footer" value="Los recursos aquí publicados son exclusivos para uso educativo y no tienen fines de lucro.">
+      </div>
+    </div>
+    <div class="btn-group right">
+      <button class="btn btn-primary" onclick="goBuilderStep(2)">Siguiente: Agregar secciones →</button>
+    </div>
+  </div>
+
+  <!-- PASO 2: Secciones -->
+  <div id="builder-step-2" style="display:none">
+    <div class="section-heading">Tipo de sección a agregar</div>
+    <div class="section-type-grid">
+      <button class="section-type-btn" onclick="addSection('lectura')">
+        <span class="type-icon">📖</span>Lectura
+      </button>
+      <button class="section-type-btn" onclick="addSection('recurso')">
+        <span class="type-icon">▶️</span>Video / Recurso
+      </button>
+      <button class="section-type-btn" onclick="addSection('quiz')">
+        <span class="type-icon">🧠</span>Ejercicio
+      </button>
+      <button class="section-type-btn" onclick="addSection('referencias')">
+        <span class="type-icon">📚</span>Referencias
+      </button>
+    </div>
+
+    <div class="section-heading">Secciones del módulo</div>
+    <div id="sections-list">
+      <div class="empty-state">
+        <div class="empty-icon">📄</div>
+        <p>Aún no hay secciones. Agrega una arriba.</p>
+      </div>
+    </div>
+
+    <div class="btn-group between" style="margin-top:16px">
+      <button class="btn" onclick="goBuilderStep(1)">← Atrás</button>
+      <button class="btn btn-primary" onclick="goBuilderStep(3)">Siguiente: Publicar →</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: Publicar -->
+  <div id="builder-step-3" style="display:none">
+    <div class="card">
+      <div class="card-title"><span class="icon">🚀</span> Resumen y publicación</div>
+      <div id="publish-summary"></div>
+      <hr>
+      <div class="field">
+        <label>Nombre del archivo en GitHub</label>
+        <input type="text" id="pub-filename" placeholder="modulo-01-nombre.html">
+        <p style="font-size:11px;color:var(--gray-400);margin-top:4px">Sugerencia: modulo-01-titulo-corto.html (sin acentos ni espacios)</p>
+      </div>
+    </div>
+    <div id="publish-result"></div>
+    <div class="btn-group between">
+      <button class="btn" onclick="goBuilderStep(2)">← Atrás</button>
+      <button class="btn btn-success" onclick="publishModule()">⬆️ Publicar en GitHub</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ TAB: ADMIN ============ -->
+<div class="tab-panel" id="panel-admin">
+<div class="container">
+  <div class="btn-group" style="margin-bottom:16px;justify-content:space-between;align-items:center">
+    <h2 style="font-size:16px;font-weight:600">Módulos publicados</h2>
+    <button class="btn btn-sm" onclick="loadRegistry()">🔄 Actualizar</button>
+  </div>
+  <div id="admin-alerts"></div>
+  <div id="modules-list">
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <p>Configura tu cuenta de GitHub para ver los módulos publicados.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ================================================
+// STATE
+// ================================================
+const state = {
+  config: {token:'', owner:'', repo:''},
+  sections: [],
+  sectionCounter: 0,
+  questionCounters: {},
+  refCounters: {}
+};
+
+// ================================================
+// INIT
+// ================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadSavedConfig();
+  updateColorPreview();
+});
+
+// ================================================
+// TABS
+// ================================================
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-btn-' + name).classList.add('active');
+  if(name === 'admin') loadRegistry();
+}
+
+// ================================================
+// CONFIG
+// ================================================
+function loadSavedConfig() {
+  try {
+    const saved = localStorage.getItem('canvas_constructor_cfg');
+    if (saved) {
+      const cfg = JSON.parse(saved);
+      document.getElementById('cfg-owner').value = cfg.owner || '';
+      document.getElementById('cfg-repo').value = cfg.repo || '';
+      document.getElementById('cfg-token').value = cfg.token || '';
+      state.config = cfg;
+      updateStatus(true, cfg.owner + '/' + cfg.repo);
+      updateGHPagesUrl();
+    }
+  } catch(e) {}
+}
+
+function saveConfig() {
+  const owner = v('cfg-owner').trim();
+  const repo = v('cfg-repo').trim();
+  const token = v('cfg-token').trim();
+  if (!owner || !repo || !token) {
+    showAlert('configAlerts', 'danger', 'Completa todos los campos de configuración.');
+    return;
+  }
+  state.config = {owner, repo, token};
+  try { localStorage.setItem('canvas_constructor_cfg', JSON.stringify(state.config)); } catch(e){}
+  verifyConfig();
+}
+
+async function verifyConfig() {
+  showLoading('Verificando conexión...');
+  try {
+    const r = await ghGet(`repos/${state.config.owner}/${state.config.repo}`);
+    hideLoading();
+    if (r.name) {
+      updateStatus(true, state.config.owner + '/' + state.config.repo);
+      updateGHPagesUrl();
+      showAlert('configAlerts', 'success', `✅ Conectado correctamente a <strong>${r.full_name}</strong>`);
+    } else {
+      updateStatus(false, 'Error de conexión');
+      showAlert('configAlerts', 'danger', 'No se pudo conectar. Verifica el token y el nombre del repositorio.');
+    }
+  } catch(e) {
+    hideLoading();
+    updateStatus(false, 'Error');
+    showAlert('configAlerts', 'danger', 'Error de conexión: ' + e.message);
+  }
+}
+
+function clearConfig() {
+  ['cfg-owner','cfg-repo','cfg-token'].forEach(id => document.getElementById(id).value = '');
+  state.config = {token:'', owner:'', repo:''};
+  try { localStorage.removeItem('canvas_constructor_cfg'); } catch(e){}
+  updateStatus(false, 'Sin configurar');
+  document.getElementById('ghPagesUrl').textContent = 'https://[usuario].github.io/[repositorio]/';
+}
+
+function updateStatus(ok, text) {
+  document.getElementById('statusDot').className = 'status-dot' + (ok ? ' connected' : '');
+  document.getElementById('statusText').textContent = text;
+}
+
+function updateGHPagesUrl() {
+  const {owner, repo} = state.config;
+  if (owner && repo) {
+    document.getElementById('ghPagesUrl').textContent = `https://${owner}.github.io/${repo}/`;
+  }
+}
+
+// ================================================
+// BUILDER STEPS
+// ================================================
+function goBuilderStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`builder-step-${i}`).style.display = i === n ? 'block' : 'none';
+    const st = document.getElementById(`step-${i}`);
+    st.classList.remove('active','done');
+    if (i < n) st.classList.add('done');
+    if (i === n) st.classList.add('active');
+  });
+  if (n === 3) buildPublishSummary();
+}
+
+// ================================================
+// SECTIONS
+// ================================================
+function addSection(tipo) {
+  state.sectionCounter++;
+  const id = `sec_${state.sectionCounter}`;
+  const num = state.sections.length + 1;
+  state.sections.push({id, tipo, num});
+  if (tipo === 'quiz') window[id + '_questions'] = [];
+  if (tipo === 'referencias') window[id + '_refs'] = [];
+  renderSections();
+}
+
+function removeSection(id) {
+  state.sections = state.sections.filter(s => s.id !== id);
+  state.sections.forEach((s,i) => s.num = i+1);
+  renderSections();
+}
+
+const typeMeta = {
+  lectura:{label:'Lectura',badge:'badge-lectura',icon:'📖'},
+  recurso:{label:'Video / Recurso',badge:'badge-recurso',icon:'▶️'},
+  quiz:{label:'Ejercicio',badge:'badge-quiz',icon:'🧠'},
+  referencias:{label:'Referencias',badge:'badge-referencias',icon:'📚'}
+};
+
+function renderSections() {
+  const el = document.getElementById('sections-list');
+  if (!state.sections.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><p>Aún no hay secciones.</p></div>';
+    return;
+  }
+  el.innerHTML = state.sections.map(s => renderSectionCard(s)).join('');
+}
+
+function renderSectionCard(s) {
+  const m = typeMeta[s.tipo];
+  let body = '';
+
+  if (s.tipo === 'lectura') {
+    body = `
+      <div class="row-2">
+        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Introducción al tema"></div>
+        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Conceptos clave"></div>
+      </div>
+      <div class="field"><label>Contenido (HTML permitido)</label><textarea id="${s.id}_contenido" rows="5" placeholder="<p>Tu contenido aquí...</p>\n<ul><li>Punto 1</li></ul>"></textarea></div>`;
+  } else if (s.tipo === 'recurso') {
+    body = `
+      <div class="row-2">
+        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Video introductorio"></div>
+        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Conceptos fundamentales"></div>
+      </div>
+      <div class="field"><label>URL del recurso (Vimeo, Genial.ly, YouTube embed, etc.)</label><input type="text" id="${s.id}_iframeUrl" placeholder="https://player.vimeo.com/video/..."></div>
+      <div class="row-2">
+        <div class="field"><label>Descripción de la transcripción</label><textarea id="${s.id}_transcripcionTexto" rows="2" placeholder="Breve descripción del recurso..."></textarea></div>
+        <div>
+          <div class="field"><label>URL de transcripción</label><input type="text" id="${s.id}_linkTranscripcion" placeholder="https://..."></div>
+          <div class="field"><label>Texto del enlace</label><input type="text" id="${s.id}_labelTranscripcion" placeholder="Ver transcripción completa"></div>
+        </div>
+      </div>`;
+  } else if (s.tipo === 'quiz') {
+    body = `
+      <div class="row-2">
+        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Ejercicio de autoestudio"></div>
+        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Evalúa tu comprensión"></div>
+      </div>
+      <div class="field"><label>Texto introductorio</label><input type="text" id="${s.id}_quizIntro" placeholder="Responde las siguientes preguntas para verificar tu comprensión..."></div>
+      <div class="section-heading" style="margin-top:12px">Preguntas</div>
+      <div id="${s.id}_qlist"></div>
+      <div class="btn-group" style="margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-sm" onclick="addQuestion('${s.id}','mc')">+ Opción múltiple</button>
+        <button class="btn btn-sm" onclick="addQuestion('${s.id}','vf')">+ Verdadero / Falso</button>
+        <button class="btn btn-sm" onclick="addQuestion('${s.id}','texto')">+ Respuesta abierta</button>
+      </div>`;
+  } else if (s.tipo === 'referencias') {
+    body = `
+      <div class="field"><label>Título de sección</label><input type="text" id="${s.id}_titulo" value="Referencias" placeholder="Referencias"></div>
+      <div id="${s.id}_reflist"></div>
+      <button class="btn btn-sm" onclick="addRef('${s.id}')" style="margin-top:6px">+ Agregar referencia</button>`;
+  }
+
+  return `<div class="section-card" id="card_${s.id}">
+    <div class="section-card-header">
+      <div class="section-num">${s.num}</div>
+      <span class="section-badge ${m.badge}">${m.icon} ${m.label}</span>
+      <span class="section-label" id="${s.id}_label">Sección ${s.num}</span>
+      <button class="btn btn-sm btn-danger" onclick="removeSection('${s.id}')">🗑️</button>
+    </div>
+    <div class="section-card-body">${body}</div>
+  </div>`;
+}
+
+// Questions
+let qGlobalCount = 0;
+function addQuestion(secId, tipo) {
+  qGlobalCount++;
+  const qId = `q_${qGlobalCount}`;
+  const key = secId + '_questions';
+  if (!window[key]) window[key] = [];
+  // Default 4 options for MC
+  if (tipo === 'mc') window[qId + '_opts'] = ['','','',''];
+  window[key].push({qId, tipo});
+  renderQuestions(secId);
+}
+
+function removeQuestion(secId, qId) {
+  const key = secId + '_questions';
+  window[key] = window[key].filter(q => q.qId !== qId);
+  renderQuestions(secId);
+}
+
+function renderQuestions(secId) {
+  const key = secId + '_questions';
+  const qs = window[key] || [];
+  const el = document.getElementById(secId + '_qlist');
+  if (!el) return;
+  const qTypes = {mc:'Opción múltiple', vf:'Verdadero / Falso', texto:'Respuesta abierta'};
+
+  el.innerHTML = qs.map((q,i) => {
+    let extra = '';
+    if (q.tipo === 'mc') {
+      const opts = window[q.qId + '_opts'] || ['','','',''];
+      extra = `<div class="field" style="margin-top:8px">
+        <label>Opciones (selecciona la correcta con el radio)</label>
+        <div class="opts-list" id="${q.qId}_optslist">
+          ${opts.map((o,oi) => `
+            <div class="opt-row">
+              <input type="radio" name="${q.qId}_correct" value="${oi}" ${o._correct?'checked':''} onchange="setCorrectOpt('${q.qId}',${oi})">
+              <input type="text" value="${o.text||''}" placeholder="Opción ${String.fromCharCode(65+oi)}" onchange="updateOpt('${q.qId}',${oi},this.value)">
+            </div>`).join('')}
+        </div>
+        <button class="add-opt-btn" onclick="addOpt('${q.qId}')">+ Agregar opción</button>
+      </div>`;
+    } else if (q.tipo === 'vf') {
+      extra = `<div class="field" style="margin-top:8px"><label>Respuesta correcta</label>
+        <select id="${q.qId}_vf"><option value="true">Verdadero</option><option value="false">Falso</option></select></div>`;
+    }
+
+    return `<div class="q-item">
+      <div class="q-header">
+        <span class="q-label">Pregunta ${i+1} · ${qTypes[q.tipo]}</span>
+        <button class="btn btn-sm btn-danger" onclick="removeQuestion('${secId}','${q.qId}')">✕</button>
+      </div>
+      <div class="field"><label>Enunciado</label><input type="text" id="${q.qId}_text" placeholder="¿Cuál es...?"></div>
+      ${extra}
+      <div class="field"><label>Retroalimentación</label><input type="text" id="${q.qId}_feedback" placeholder="Explicación de la respuesta correcta..."></div>
+    </div>`;
+  }).join('') || '<p style="font-size:12px;color:var(--gray-400);padding:4px 0">Sin preguntas aún.</p>';
+}
+
+function updateOpt(qId, idx, value) {
+  const opts = window[qId + '_opts'] || [];
+  if (!opts[idx]) opts[idx] = {};
+  opts[idx].text = value;
+  window[qId + '_opts'] = opts;
+}
+
+function setCorrectOpt(qId, idx) {
+  const opts = window[qId + '_opts'] || [];
+  opts.forEach((o,i) => { if(typeof o === 'object') o._correct = i === idx; });
+  window[qId + '_opts'] = opts;
+}
+
+function addOpt(qId) {
+  const opts = window[qId + '_opts'] || [];
+  opts.push({text:'', _correct:false});
+  window[qId + '_opts'] = opts;
+  // find section and re-render
+  for (const s of state.sections) {
+    const qs = window[s.id + '_questions'] || [];
+    if (qs.find(q => q.qId === qId)) { renderQuestions(s.id); break; }
+  }
+}
+
+// References
+let refGlobalCount = 0;
+function addRef(secId) {
+  refGlobalCount++;
+  const rId = `ref_${refGlobalCount}`;
+  const key = secId + '_refs';
+  if (!window[key]) window[key] = [];
+  window[key].push(rId);
+  renderRefs(secId);
+}
+
+function removeRef(secId, rId) {
+  const key = secId + '_refs';
+  window[key] = window[key].filter(r => r !== rId);
+  renderRefs(secId);
+}
+
+function renderRefs(secId) {
+  const key = secId + '_refs';
+  const rs = window[key] || [];
+  const el = document.getElementById(secId + '_reflist');
+  if (!el) return;
+  el.innerHTML = rs.map((rId,i) => `
+    <div class="ref-item">
+      <input type="text" id="${rId}_text" placeholder="${i+1}. Autor (Año). Título del recurso...">
+      <button class="btn btn-sm btn-danger btn-icon" onclick="removeRef('${secId}','${rId}')">✕</button>
+    </div>`).join('');
+}
+
+// ================================================
+// COLOR
+// ================================================
+function syncColor() {
+  const picker = document.getElementById('mod-color-picker');
+  document.getElementById('mod-color').value = picker.value;
+}
+function updateColorPreview() {
+  const col = document.getElementById('mod-color').value;
+  try { document.getElementById('mod-color-picker').value = col; } catch(e){}
+}
+
+// ================================================
+// PUBLISH SUMMARY
+// ================================================
+function buildPublishSummary() {
+  const num = v('mod-num') || '1';
+  const title = v('mod-title') || '(Sin título)';
+  const sCount = state.sections.length;
+  const qCount = state.sections.filter(s=>s.tipo==='quiz')
+    .reduce((a,s) => a + (window[s.id+'_questions']||[]).length, 0);
+
+  document.getElementById('publish-summary').innerHTML = `
+    <div class="row-3">
+      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Módulo</span><br><strong style="font-size:15px">${num}</strong></div>
+      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Título</span><br><strong>${title}</strong></div>
+      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Secciones</span><br><strong>${sCount} secciones · ${qCount} preguntas</strong></div>
+    </div>`;
+
+  // Suggest filename
+  const slug = title.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+    .substring(0, 40);
+  const padded = String(num).padStart(2,'0');
+  document.getElementById('pub-filename').value = `modulo-${padded}-${slug}.html`;
+}
+
+// ================================================
+// PUBLISH TO GITHUB
+// ================================================
+async function publishModule() {
+  if (!state.config.token) {
+    showAlert('builderAlerts', 'danger', 'Primero configura tus credenciales de GitHub en la pestaña Configuración.');
+    return;
+  }
+
+  const filename = v('pub-filename').trim();
+  if (!filename.endsWith('.html')) {
+    showAlert('builderAlerts', 'warning', 'El nombre del archivo debe terminar en .html');
+    return;
+  }
+
+  showLoading('Generando HTML del módulo...');
+
+  const moduleData = collectModuleData();
+  const htmlContent = buildModuleHTML(moduleData);
+
+  try {
+    showLoading('Subiendo módulo a GitHub...');
+    // Check if file exists (for SHA)
+    let existingSha = null;
+    try {
+      const existing = await ghGet(`repos/${state.config.owner}/${state.config.repo}/contents/${filename}`);
+      existingSha = existing.sha;
+    } catch(e) { /* File doesn't exist yet, that's fine */ }
+
+    // Upload module HTML
+    await ghPut(filename, htmlContent, `Publicar ${filename}`, existingSha);
+
+    // Update registry
+    showLoading('Actualizando registro...');
+    const {modules, sha: regSha} = await getRegistry();
+    const existingIdx = modules.findIndex(m => m.filename === filename);
+    const ghPagesUrl = `https://${state.config.owner}.github.io/${state.config.repo}/${filename}`;
+    const iframeCode = `<iframe src="${ghPagesUrl}" style="width:100%;height:100vh;border:none;display:block;"></iframe>`;
+    const entry = {
+      filename,
+      numero: moduleData.numero,
+      titulo: moduleData.titulo,
+      author: v('mod-author') || 'Sin especificar',
+      url: ghPagesUrl,
+      iframeCode,
+      publishedAt: new Date().toISOString()
+    };
+    if (existingIdx >= 0) modules[existingIdx] = entry;
+    else modules.push(entry);
+    await saveRegistry(modules, regSha);
+
+    hideLoading();
+
+    // Show success
+    document.getElementById('publish-result').innerHTML = `
+      <div class="publish-result">
+        <div class="publish-result-title">✅ ¡Módulo publicado correctamente!</div>
+        <p style="font-size:13px;color:#065f46;margin-bottom:8px">URL del módulo (GitHub Pages):</p>
+        <div class="url-display">${ghPagesUrl}</div>
+        <p style="font-size:13px;color:#065f46;margin:12px 0 6px">Código para pegar en Canvas (RCE → HTML):</p>
+        <div class="iframe-code">${iframeCode}</div>
+        <div class="btn-group" style="margin-top:12px">
+          <button class="btn btn-sm" onclick="copyText('${iframeCode.replace(/'/g,"\\'")}')">📋 Copiar iframe</button>
+          <a href="${ghPagesUrl}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
+        </div>
+        <p style="font-size:11px;color:#6ee7b7;margin-top:10px">⏱️ GitHub Pages puede tardar 1-3 minutos en actualizar.</p>
+      </div>`;
+  } catch(e) {
+    hideLoading();
+    showAlert('builderAlerts', 'danger', 'Error al publicar: ' + e.message);
+  }
+}
+
+function collectModuleData() {
+  return {
+    numero: parseInt(v('mod-num')) || 1,
+    titulo: v('mod-title') || 'Módulo',
+    descripcion: v('mod-desc') || '',
+    color: v('mod-color') || '#0066cc',
+    footer: v('mod-footer') || '',
+    secciones: state.sections.map((s,i) => {
+      const base = {
+        id: `s${i+1}`,
+        numero: i+1,
+        titulo: v(`${s.id}_titulo`) || typeMeta[s.tipo].label,
+        subtitulo: v(`${s.id}_subtitulo`) || '',
+        tipo: s.tipo
+      };
+      if (s.tipo === 'lectura') {
+        base.contenido = v(`${s.id}_contenido`) || '<p>Contenido de la sección.</p>';
+      } else if (s.tipo === 'recurso') {
+        base.iframeUrl = v(`${s.id}_iframeUrl`) || '';
+        base.transcripcionTexto = v(`${s.id}_transcripcionTexto`) || '';
+        base.linkTranscripcion = v(`${s.id}_linkTranscripcion`) || '#';
+        base.labelTranscripcion = v(`${s.id}_labelTranscripcion`) || 'Ver transcripción';
+      } else if (s.tipo === 'quiz') {
+        base.quizIntro = v(`${s.id}_quizIntro`) || 'Responde las siguientes preguntas.';
+        const qs = window[`${s.id}_questions`] || [];
+        base.preguntas = qs.map((q,qi) => {
+          const preg = {
+            id: `q${qi+1}_s${i+1}`,
+            pregunta: v(`${q.qId}_text`) || `Pregunta ${qi+1}`,
+            tipo: q.tipo === 'mc' ? 'multiple-choice' : q.tipo === 'vf' ? 'verdadero-falso' : 'texto',
+            feedback: v(`${q.qId}_feedback`) || ''
+          };
+          if (q.tipo === 'mc') {
+            const opts = window[`${q.qId}_opts`] || [];
+            preg.opciones = opts.map((o,oi) => ({id:String.fromCharCode(97+oi), texto:o.text||`Opción ${oi+1}`}));
+            const ci = opts.findIndex(o => o._correct);
+            preg.respuestaCorrecta = ci >= 0 ? String.fromCharCode(97+ci) : 'a';
+          } else if (q.tipo === 'vf') {
+            const el = document.getElementById(`${q.qId}_vf`);
+            preg.respuestaCorrecta = el ? el.value === 'true' : true;
+          } else {
+            preg.esRespuestaAbierta = true;
+          }
+          return preg;
+        });
+      } else if (s.tipo === 'referencias') {
+        const rs = window[`${s.id}_refs`] || [];
+        base.referencias = rs.map((rId,ri) => ({id:`ref${ri+1}`, texto:v(`${rId}_text`) || `Referencia ${ri+1}`}));
+      }
+      return base;
+    })
+  };
+}
+
+// ================================================
+// HTML GENERATOR
+// ================================================
+function buildModuleHTML(d) {
+  const cfg = JSON.stringify(d, null, 2);
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo ${d.numero} - ${d.titulo}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:${d.color};--pd:${d.color}cc;--s:#10b981;--d:#ef4444;--li:#f8fafc;--g:#64748b;--dk:#1e293b;--b:#e2e8f0}
+body{font-family:'Segoe UI',-apple-system,sans-serif;color:var(--dk);background:var(--li);line-height:1.6}
+.mc{max-width:900px;margin:0 auto;padding:40px 20px}
+.mh{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,.1);margin-bottom:24px;border-left:6px solid var(--p)}
+.mn{display:inline-block;background:var(--p);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:10px}
+.mt{font-size:28px;font-weight:700;margin-bottom:10px}
+.md{color:var(--g);font-size:14px}
+.ps{background:#fff;padding:16px 24px;border-radius:10px;margin-bottom:24px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.pl{font-size:11px;font-weight:600;color:var(--g);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.pb{width:100%;height:6px;background:var(--b);border-radius:3px;overflow:hidden}
+.pf{height:100%;background:var(--p);width:0%;transition:width .4s ease}
+.sc{display:flex;flex-direction:column;gap:12px}
+.sec{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07);transition:box-shadow .3s}
+.sec:hover{box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.sec.completed{border-left:4px solid var(--s)}
+.sh{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none;transition:background .2s}
+.sh:hover{background:var(--li)}
+.sn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--p);color:#fff;border-radius:8px;font-weight:700;font-size:15px;flex-shrink:0}
+.sec.completed .sn{background:var(--s)}
+.sw{flex:1}
+.st{font-size:16px;font-weight:600;margin-bottom:2px}
+.ss{font-size:12px;color:var(--g)}
+.sg{font-size:20px;color:var(--g);transition:transform .3s;flex-shrink:0}
+.sec.active .sg{transform:rotate(180deg);color:var(--p)}
+.scont{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--b)}
+.sec.active .scont{max-height:3000px}
+.sb{padding:24px}
+.cr{line-height:1.8}.cr p{margin-bottom:14px}.cr ul,.cr ol{margin-left:20px;margin-bottom:14px}.cr li{margin-bottom:6px}
+.ri{width:100%;min-height:480px;border:1px solid var(--b);border-radius:8px;margin-bottom:12px}
+.rt{background:var(--li);padding:14px;border-radius:8px;border-left:4px solid var(--p);margin-top:12px}
+.rl{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
+.rlink{display:inline-block;margin-top:12px;padding:10px 20px;background:var(--p);color:#fff;text-decoration:none;border-radius:7px;font-size:13px;font-weight:600}
+.qc{display:flex;flex-direction:column;gap:20px}
+.qi-intro{background:var(--p);color:#fff;padding:20px;border-radius:8px;font-size:13px}
+.qi{background:var(--li);padding:20px;border-radius:8px;border:2px solid transparent;transition:all .3s}
+.qi.answered{border-color:var(--s);background:#f0fdf4}
+.qn{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
+.qt{font-size:15px;font-weight:600;margin-bottom:14px}
+.ao{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;padding:10px 14px;background:#fff;border:2px solid var(--b);border-radius:7px;cursor:pointer;gap:10px;transition:all .2s}
+.opt:hover{border-color:var(--p)}
+.opt input{accent-color:var(--p);width:17px;height:17px}
+.ti{width:100%;padding:10px 14px;border:2px solid var(--b);border-radius:7px;font-size:13px;font-family:inherit}
+.ti:focus{outline:none;border-color:var(--p)}
+.fb{margin-top:10px;padding:10px 14px;border-radius:7px;font-size:13px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(16,185,129,.1);border-left:4px solid var(--s);color:#047857}
+.fb.info{background:rgba(0,102,204,.1);border-left:4px solid var(--p);color:var(--pd)}
+.rl-list{list-style:none;padding:0}
+.rl-list li{padding:10px 0;border-bottom:1px solid var(--b);font-size:13px;line-height:1.6}
+.rl-list li:last-child{border-bottom:none}
+.mf{text-align:center;padding:24px;color:var(--g);font-size:11px;margin-top:32px}
+@media(max-width:640px){.mc{padding:16px}.mh{padding:20px}.mt{font-size:22px}.sh{padding:14px}.sb{padding:16px}}
+</style>
+</head>
+<body>
+<div class="mc">
+<div class="mh">
+<div class="mn" id="mn"></div>
+<h1 class="mt" id="mt"></h1>
+<p class="md" id="md"></p>
+</div>
+<div class="ps">
+<div class="pl">Progreso del módulo</div>
+<div class="pb"><div class="pf" id="pf"></div></div>
+</div>
+<div class="sc" id="sc"></div>
+<div class="mf">${d.footer}</div>
+</div>
+<script>
+const C=${cfg};
+let R={};
+function init(){
+  document.getElementById('mn').textContent='Módulo '+C.numero;
+  document.getElementById('mt').textContent=C.titulo;
+  document.getElementById('md').textContent=C.descripcion;
+  const sc=document.getElementById('sc');
+  sc.innerHTML='';
+  C.secciones.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='sec';el.id='s_'+s.id;
+    el.innerHTML='<div class="sh" onclick="tog(\''+s.id+'\')"><div class="sn">'+s.numero+'</div><div class="sw"><div class="st">'+s.titulo+'</div><div class="ss">'+(s.subtitulo||'')+'</div></div><div class="sg">▼</div></div><div class="scont"><div class="sb" id="b_'+s.id+'"></div></div>';
+    sc.appendChild(el);
+    const b=document.getElementById('b_'+s.id);
+    if(s.tipo==='lectura'){b.innerHTML='<div class="cr">'+s.contenido+'</div>'}
+    else if(s.tipo==='recurso'){b.innerHTML='<div style="text-align:center;padding:16px 0"><iframe class="ri" src="'+s.iframeUrl+'" allowfullscreen></iframe><div class="rt"><div class="rl">Transcripción</div><p style="font-size:13px">'+s.transcripcionTexto+'</p><a href="'+s.linkTranscripcion+'" class="rlink" target="_blank">'+s.labelTranscripcion+'</a></div></div>'}
+    else if(s.tipo==='quiz'){b.innerHTML=qHTML(s)}
+    else if(s.tipo==='referencias'){b.innerHTML='<ul class="rl-list">'+(s.referencias||[]).map(r=>'<li>'+r.texto+'</li>').join('')+'</ul>'}
+  });
+  setTimeout(initQ,0);
+}
+function qHTML(s){
+  let h='<div class="qc"><div class="qi-intro">'+s.quizIntro+'</div>';
+  (s.preguntas||[]).forEach((p,i)=>{h+='<div class="qi" id="qi_'+p.id+'"><div class="qn">Pregunta '+(i+1)+'</div><div class="qt">'+p.pregunta+'</div><div id="qc_'+p.id+'"></div><div class="fb" id="fb_'+p.id+'"></div></div>'});
+  return h+'</div>';
+}
+function initQ(){
+  C.secciones.forEach(s=>{
+    (s.preguntas||[]).forEach(p=>{
+      const d=document.getElementById('qc_'+p.id);if(!d)return;
+      if(p.tipo==='multiple-choice'){
+        d.innerHTML='<div class="ao">'+(p.opciones||[]).map(o=>'<label class="opt"><input type="radio" name="'+p.id+'" value="'+o.id+'" onchange="val(\''+p.id+'\',\''+o.id+'\',\'mc\')"><span>'+o.texto+'</span></label>').join('')+'</div>';
+      }else if(p.tipo==='verdadero-falso'){
+        d.innerHTML='<div class="ao"><label class="opt"><input type="radio" name="'+p.id+'" value="true" onchange="val(\''+p.id+'\',\'true\',\'vf\')"><span>Verdadero</span></label><label class="opt"><input type="radio" name="'+p.id+'" value="false" onchange="val(\''+p.id+'\',\'false\',\'vf\')"><span>Falso</span></label></div>';
+      }else{
+        d.innerHTML='<input type="text" class="ti" placeholder="Escribe tu respuesta..." onchange="val(\''+p.id+'\',this.value,\'txt\')">';
+      }
+    });
+  });
+}
+function tog(id){document.getElementById('s_'+id).classList.toggle('active')}
+function val(pid,resp,tipo){
+  const all=C.secciones.flatMap(s=>s.preguntas||[]);
+  const p=all.find(q=>q.id===pid);if(!p)return;
+  R[pid]=resp;
+  const fb=document.getElementById('fb_'+pid);
+  const qi=document.getElementById('qi_'+pid);
+  let ok=p.esRespuestaAbierta||(tipo==='vf'?(resp==='true')===p.respuestaCorrecta:resp===p.respuestaCorrecta);
+  fb.className='fb show '+(ok?'ok':'info');
+  fb.textContent=(ok?'✓ ':'')+p.feedback;
+  if(ok)qi.classList.add('answered');
+  const total=C.secciones.flatMap(s=>s.preguntas||[]).length;
+  document.getElementById('pf').style.width=(total?Object.keys(R).length/total*100:0)+'%';
+}
+init();
+<\/script>
+</body>
+</html>`;
+}
+
+// ================================================
+// GITHUB API
+// ================================================
+async function ghGet(path) {
+  const r = await fetch(`https://api.github.com/${path}`, {
+    headers: {'Authorization': `token ${state.config.token}`, 'Accept': 'application/vnd.github.v3+json'}
+  });
+  if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
+  return r.json();
+}
+
+async function ghPut(path, content, message, sha) {
+  const encoded = btoa(unescape(encodeURIComponent(content)));
+  const body = {message, content: encoded};
+  if (sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${state.config.owner}/${state.config.repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${state.config.token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github.v3+json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) {
+    const err = await r.json();
+    throw new Error(err.message || 'Error al subir archivo');
+  }
+  return r.json();
+}
+
+async function getRegistry() {
+  try {
+    const file = await ghGet(`repos/${state.config.owner}/${state.config.repo}/contents/_registry.json`);
+    const content = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
+    return {modules: content.modules || [], sha: file.sha};
+  } catch(e) {
+    return {modules: [], sha: null};
+  }
+}
+
+async function saveRegistry(modules, sha) {
+  const content = JSON.stringify({modules, updatedAt: new Date().toISOString()}, null, 2);
+  return ghPut('_registry.json', content, 'Update registry', sha);
+}
+
+// ================================================
+// ADMIN
+// ================================================
+async function loadRegistry() {
+  if (!state.config.token) {
+    document.getElementById('modules-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔑</div>
+        <p>Configura tus credenciales de GitHub primero.</p>
+      </div>`;
+    return;
+  }
+  showLoading('Cargando módulos...');
+  try {
+    const {modules} = await getRegistry();
+    hideLoading();
+    if (!modules.length) {
+      document.getElementById('modules-list').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <p>Aún no has publicado ningún módulo. ¡Ve al Constructor y crea el primero!</p>
+        </div>`;
+      return;
+    }
+    document.getElementById('modules-list').innerHTML = `
+      <div class="modules-grid">
+        ${modules.map(m => `
+          <div class="module-item">
+            <div class="module-item-header">
+              <div>
+                <div class="module-item-title">${m.titulo}</div>
+                <div class="module-item-meta">Por ${m.author} · ${new Date(m.publishedAt).toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'})}</div>
+              </div>
+              <span class="module-num-badge">Módulo ${m.numero}</span>
+            </div>
+            <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;margin-bottom:4px">Código iframe para Canvas:</div>
+            <div class="iframe-code">${m.iframeCode}</div>
+            <div class="module-actions">
+              <button class="btn btn-sm btn-primary" onclick="copyText('${m.iframeCode.replace(/'/g,"\\'")}')">📋 Copiar iframe</button>
+              <a href="${m.url}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
+              <button class="btn btn-sm" onclick="copyText('${m.url}')">🔗 Copiar URL</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } catch(e) {
+    hideLoading();
+    showAlert('admin-alerts', 'danger', 'Error al cargar módulos: ' + e.message);
+  }
+}
+
+// ================================================
+// UTILITIES
+// ================================================
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+function showAlert(containerId, type, msg) {
+  const icons = {success:'✅', danger:'❌', warning:'⚠️', info:'ℹ️'};
+  document.getElementById(containerId).innerHTML = `
+    <div class="alert alert-${type}">
+      <span class="alert-icon">${icons[type]}</span>
+      <span>${msg}</span>
+    </div>`;
+  setTimeout(() => {
+    const el = document.getElementById(containerId);
+    if (el) el.innerHTML = '';
+  }, 6000);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = event.target.textContent;
+    event.target.textContent = '✅ ¡Copiado!';
+    setTimeout(() => event.target.textContent = orig, 2000);
+  });
+}
+</script>
+</body>
+</html>
