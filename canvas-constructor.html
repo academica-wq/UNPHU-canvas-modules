@@ -6,1142 +6,463 @@
 <title>Constructor de Módulos | Canvas LMS</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --primary:#0066cc;--primary-dark:#004a99;--primary-light:#e8f0fb;
-  --success:#10b981;--success-light:#ecfdf5;
-  --danger:#ef4444;--danger-light:#fef2f2;
-  --warning:#f59e0b;--warning-light:#fffbeb;
-  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
-  --gray-400:#94a3b8;--gray-500:#64748b;--gray-700:#334155;--gray-900:#0f172a;
-  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 12px rgba(0,0,0,.1);
-}
-body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--gray-50);color:var(--gray-900);font-size:14px;line-height:1.5}
-
-/* NAV */
-.nav{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 24px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:100;height:56px}
-.nav-brand{font-size:15px;font-weight:700;color:var(--primary);margin-right:32px;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.nav-brand span{font-size:20px}
-.nav-tabs{display:flex;gap:0;height:100%}
-.nav-tab{padding:0 20px;height:100%;border:none;background:none;font-size:13px;font-weight:500;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit;white-space:nowrap}
-.nav-tab:hover{color:var(--gray-700)}
-.nav-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
-.nav-status{margin-left:auto;display:flex;align-items:center;gap:8px}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--gray-300)}
-.status-dot.connected{background:var(--success)}
-.status-text{font-size:12px;color:var(--gray-500)}
-
-/* LAYOUT */
-.container{max-width:960px;margin:0 auto;padding:32px 24px}
-.tab-panel{display:none}.tab-panel.active{display:block}
-
-/* CARDS */
-.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px}
-.card-title{font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card-title .icon{font-size:18px}
-
-/* FORMS */
-.field{margin-bottom:14px}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-.field input,.field textarea,.field select{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--gray-900);background:#fff;transition:border-color .2s}
-.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
-.field textarea{resize:vertical;min-height:80px}
-.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-700);font-family:inherit;transition:all .2s;white-space:nowrap}
-.btn:hover{background:var(--gray-50);border-color:var(--gray-300)}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
-.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
-.btn-success:hover{background:#059669}
-.btn-danger{color:var(--danger);border-color:var(--gray-200)}
-.btn-danger:hover{background:var(--danger-light);border-color:var(--danger)}
-.btn-sm{padding:6px 10px;font-size:12px}
-.btn-icon{padding:7px;border-radius:var(--radius-sm)}
-.btn-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-group.right{justify-content:flex-end}
-.btn-group.between{justify-content:space-between}
-
-/* ALERTS */
-.alert{padding:12px 16px;border-radius:var(--radius-md);font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.alert-success{background:var(--success-light);border:1px solid #a7f3d0;color:#065f46}
-.alert-danger{background:var(--danger-light);border:1px solid #fca5a5;color:#991b1b}
-.alert-warning{background:var(--warning-light);border:1px solid #fde68a;color:#92400e}
-.alert-info{background:var(--primary-light);border:1px solid #bfdbfe;color:#1e40af}
-
-/* SECTIONS BUILDER */
-.section-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.section-type-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border:1.5px dashed var(--gray-200);border-radius:var(--radius-md);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray-500);font-family:inherit;transition:all .2s}
-.section-type-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
-.section-type-btn .type-icon{font-size:24px}
-
-.section-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden}
-.section-card-header{padding:14px 18px;display:flex;align-items:center;gap:12px;background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
-.section-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-lectura{background:#dbeafe;color:#1e40af}
-.badge-recurso{background:#d1fae5;color:#065f46}
-.badge-quiz{background:#fef3c7;color:#92400e}
-.badge-referencias{background:#f3f4f6;color:#374151}
-.section-card-body{padding:18px}
-.section-num{width:28px;height:28px;border-radius:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.section-label{font-size:13px;font-weight:600;color:var(--gray-700);flex:1}
-
-/* QUESTIONS */
-.q-item{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px;margin-bottom:8px}
-.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.q-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px}
-.opts-list{display:flex;flex-direction:column;gap:6px}
-.opt-row{display:flex;align-items:center;gap:8px}
-.opt-row input[type=radio]{accent-color:var(--primary);width:16px;height:16px;flex-shrink:0}
-.opt-row input[type=text]{flex:1;padding:7px 10px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);font-size:12px;font-family:inherit}
-.add-opt-btn{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 0;font-weight:500}
-.add-opt-btn:hover{text-decoration:underline}
-
-/* REFS */
-.ref-item{display:flex;gap:8px;margin-bottom:6px}
-.ref-item input{flex:1}
-
-/* STEPS */
-.steps{display:flex;gap:0;margin-bottom:24px;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden}
-.step-item{flex:1;padding:12px;text-align:center;font-size:12px;font-weight:500;color:var(--gray-400);border-right:1px solid var(--gray-200);cursor:pointer;transition:all .2s}
-.step-item:last-child{border-right:none}
-.step-item.active{background:var(--primary-light);color:var(--primary)}
-.step-item.done{color:var(--success)}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--gray-200);color:var(--gray-500);font-size:10px;margin-right:6px;font-weight:700}
-.step-item.active .step-num{background:var(--primary);color:#fff}
-.step-item.done .step-num{background:var(--success);color:#fff}
-
-/* ADMIN */
-.modules-grid{display:grid;gap:12px}
-.module-item{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px}
-.module-item-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-.module-item-title{font-size:15px;font-weight:600;color:var(--gray-900)}
-.module-item-meta{font-size:12px;color:var(--gray-400);margin-top:2px}
-.module-num-badge{background:var(--primary);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.iframe-code{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Courier New',monospace;font-size:11px;color:var(--gray-700);word-break:break-all;line-height:1.6;margin:8px 0}
-.module-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.empty-state{text-align:center;padding:60px 20px;color:var(--gray-400)}
-.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
-.empty-state p{font-size:14px}
-
-/* LOADING */
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--gray-200);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:12px;font-size:14px;color:var(--gray-500)}
-.loading-overlay.hidden{display:none}
-
-/* DIVIDER */
-hr{border:none;border-top:1px solid var(--gray-200);margin:20px 0}
-.section-heading{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);margin-bottom:14px}
-
-/* CODE OUTPUT */
-.code-block{background:var(--gray-900);color:#a5f3fc;border-radius:var(--radius-md);padding:16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.7;overflow-x:auto;word-break:break-all}
-
-/* PUBLISH RESULT */
-.publish-result{background:var(--success-light);border:1px solid #6ee7b7;border-radius:var(--radius-lg);padding:20px;margin-top:16px}
-.publish-result-title{font-size:15px;font-weight:700;color:#065f46;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.url-display{background:#fff;border:1px solid #6ee7b7;border-radius:var(--radius-sm);padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;color:var(--primary);word-break:break-all;margin:6px 0}
-
-/* COLOR PREVIEW */
-.color-preview{width:28px;height:28px;border-radius:4px;border:1px solid var(--gray-200);display:inline-block;vertical-align:middle;margin-left:6px}
-
-@media(max-width:640px){
-  .section-type-grid{grid-template-columns:repeat(2,1fr)}
-  .row-2,.row-3{grid-template-columns:1fr}
-  .nav-tab{padding:0 12px;font-size:12px}
-}
+:root{--pri:#0066cc;--pri-d:#004a99;--pri-l:#e8f0fb;--suc:#10b981;--suc-l:#ecfdf5;--dan:#ef4444;--dan-l:#fef2f2;--war:#f59e0b;--war-l:#fffbeb;--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g400:#94a3b8;--g500:#64748b;--g700:#334155;--g900:#0f172a;--r4:4px;--r6:6px;--r10:10px;--r14:14px}
+body{font-family:"Segoe UI",-apple-system,sans-serif;background:var(--g50);color:var(--g900);font-size:14px;line-height:1.5}
+.nav{background:#fff;border-bottom:1px solid var(--g200);padding:0 24px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100}
+.nav-brand{font-size:15px;font-weight:700;color:var(--pri);margin-right:32px}
+.nav-tabs{display:flex;height:100%}
+.nav-tab{padding:0 18px;height:100%;border:none;background:none;font-size:13px;font-weight:500;color:var(--g500);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit}
+.nav-tab:hover{color:var(--g700)}
+.nav-tab.active{color:var(--pri);border-bottom-color:var(--pri)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g500)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g200)}
+.dot.on{background:var(--suc)}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px}
+.panel{display:none}.panel.active{display:block}
+.card{background:#fff;border:1px solid var(--g200);border-radius:var(--r14);padding:22px;margin-bottom:14px}
+.card-h{font-size:15px;font-weight:600;margin-bottom:14px}
+.f{margin-bottom:13px}
+.f label{display:block;font-size:11px;font-weight:700;color:var(--g500);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.f input,.f textarea,.f select{width:100%;padding:8px 11px;border:1px solid var(--g200);border-radius:var(--r6);font-size:13px;font-family:inherit;color:var(--g900);background:#fff;transition:border-color .15s}
+.f input:focus,.f textarea:focus,.f select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l)}
+.f textarea{resize:vertical;min-height:80px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:var(--r6);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--g200);background:#fff;color:var(--g700);font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--g50)}.btn:active{transform:scale(.98)}
+.btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}.btn-p:hover{background:var(--pri-d)}
+.btn-s{background:var(--suc);color:#fff;border-color:var(--suc)}.btn-s:hover{background:#059669}
+.btn-d{color:var(--dan)}.btn-d:hover{background:var(--dan-l)}
+.btn-sm{padding:5px 9px;font-size:12px}
+.bg{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bg-r{justify-content:flex-end}.bg-b{justify-content:space-between}
+.al{padding:11px 14px;border-radius:var(--r10);font-size:13px;margin-bottom:14px}
+.al-s{background:var(--suc-l);border:1px solid #a7f3d0;color:#065f46}
+.al-d{background:var(--dan-l);border:1px solid #fca5a5;color:#991b1b}
+.al-w{background:var(--war-l);border:1px solid #fde68a;color:#92400e}
+.al-i{background:var(--pri-l);border:1px solid #bfdbfe;color:#1e40af}
+.steps{display:flex;background:#fff;border:1px solid var(--g200);border-radius:var(--r10);overflow:hidden;margin-bottom:20px}
+.stp{flex:1;padding:11px;text-align:center;font-size:12px;font-weight:500;color:var(--g400);border-right:1px solid var(--g200);cursor:pointer;transition:all .15s}
+.stp:last-child{border-right:none}
+.stp.active{background:var(--pri-l);color:var(--pri)}.stp.done{color:var(--suc)}
+.stp-n{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--g200);color:var(--g500);font-size:10px;margin-right:5px;font-weight:700}
+.stp.active .stp-n{background:var(--pri);color:#fff}.stp.done .stp-n{background:var(--suc);color:#fff}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}
+.tbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 6px;border:1.5px dashed var(--g200);border-radius:var(--r10);background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:var(--g500);font-family:inherit;transition:all .15s}
+.tbtn:hover{border-color:var(--pri);color:var(--pri);background:var(--pri-l)}
+.tbtn .ti{font-size:22px}
+.sc{background:#fff;border:1px solid var(--g200);border-radius:var(--r14);margin-bottom:10px;overflow:hidden}
+.sc-h{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g50);border-bottom:1px solid var(--g200)}
+.sc-n{width:26px;height:26px;border-radius:5px;background:var(--pri);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.b-lec{background:#dbeafe;color:#1e40af}.b-rec{background:#d1fae5;color:#065f46}
+.b-qui{background:#fef3c7;color:#92400e}.b-ref{background:#f3f4f6;color:#374151}
+.sc-lbl{font-size:13px;font-weight:600;color:var(--g700);flex:1}
+.sc-b{padding:16px}
+.qi{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r10);padding:12px;margin-bottom:7px}
+.qi-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.qi-l{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px}
+.opts{display:flex;flex-direction:column;gap:5px}
+.opt-r{display:flex;align-items:center;gap:7px}
+.opt-r input[type=radio]{accent-color:var(--pri);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.opt-r input[type=text]{flex:1;padding:6px 9px;border:1px solid var(--g200);border-radius:var(--r4);font-size:12px;font-family:inherit}
+.add-o{font-size:12px;color:var(--pri);background:none;border:none;cursor:pointer;font-family:inherit;padding:3px 0;font-weight:500}
+.add-o:hover{text-decoration:underline}
+.ref-r{display:flex;gap:7px;margin-bottom:5px}.ref-r input{flex:1}
+.mod-item{background:#fff;border:1px solid var(--g200);border-radius:var(--r14);padding:18px;margin-bottom:10px}
+.mod-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.mod-t{font-size:15px;font-weight:600}.mod-m{font-size:12px;color:var(--g400);margin-top:2px}
+.mod-badge{background:var(--pri);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.code-box{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r6);padding:9px 11px;font-family:monospace;font-size:11px;color:var(--g700);word-break:break-all;line-height:1.6;margin:7px 0}
+.result{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:var(--r14);padding:18px;margin-top:14px}
+.result-t{font-size:14px;font-weight:700;color:#065f46;margin-bottom:10px}
+.url-box{background:#fff;border:1px solid #6ee7b7;border-radius:var(--r6);padding:9px 12px;font-family:monospace;font-size:12px;color:var(--pri);word-break:break-all;margin:5px 0}
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:10px;font-size:14px;color:var(--g500)}
+.ov.hidden{display:none}
+.spin{width:18px;height:18px;border:2px solid var(--g200);border-top-color:var(--pri);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:48px 20px;color:var(--g400)}
+.empty-i{font-size:42px;margin-bottom:10px}
+hr{border:none;border-top:1px solid var(--g200);margin:18px 0}
+@media(max-width:600px){.r2,.r3{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr)}.nav-tab{padding:0 10px;font-size:11px}}
 </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
-<div class="loading-overlay hidden" id="loadingOverlay">
-  <div class="spinner"></div>
-  <span id="loadingText">Publicando módulo...</span>
+<div class="ov hidden" id="ov">
+  <div class="spin"></div>
+  <span id="ov-txt">Procesando...</span>
 </div>
 
-<!-- NAVIGATION -->
 <nav class="nav">
-  <div class="nav-brand"><span>🎓</span> Constructor Canvas</div>
+  <div class="nav-brand">🎓 Constructor Canvas</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('config')" id="tab-btn-config">⚙️ Configuración</button>
-    <button class="nav-tab" onclick="showTab('builder')" id="tab-btn-builder">🔨 Constructor</button>
-    <button class="nav-tab" onclick="showTab('admin')" id="tab-btn-admin">📚 Mis módulos</button>
+    <button class="nav-tab active" id="tb-cfg" onclick="showPanel('cfg')">⚙️ Configuración</button>
+    <button class="nav-tab" id="tb-bld" onclick="showPanel('bld')">🔨 Constructor</button>
+    <button class="nav-tab" id="tb-adm" onclick="showPanel('adm')">📚 Mis módulos</button>
   </div>
-  <div class="nav-status">
-    <div class="status-dot" id="statusDot"></div>
-    <span class="status-text" id="statusText">Sin configurar</span>
+  <div class="nav-right">
+    <div class="dot" id="dot"></div>
+    <span id="conn-txt">Sin configurar</span>
   </div>
 </nav>
 
-<!-- ============ TAB: CONFIGURACIÓN ============ -->
-<div class="tab-panel active" id="panel-config">
-<div class="container">
-
-  <div id="configAlerts"></div>
-
+<!-- CONFIGURACIÓN -->
+<div class="panel active" id="p-cfg">
+<div class="wrap">
+  <div id="cfg-alerts"></div>
   <div class="card">
-    <div class="card-title"><span class="icon">🔑</span> Credenciales de GitHub</div>
-    <div class="alert alert-info">
-      <span class="alert-icon">ℹ️</span>
-      <div>Necesitas un <strong>Personal Access Token</strong> de GitHub con permisos de <code>repo</code> (Contents: Read & Write). 
-      <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--primary)">Generar token aquí →</a></div>
+    <div class="card-h">🔑 Credenciales de GitHub</div>
+    <div class="al al-i">ℹ️ Necesitas un <strong>Personal Access Token</strong> con scope <code>repo</code>. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--pri)">Generar token →</a></div>
+    <div class="r3">
+      <div class="f"><label>Usuario GitHub</label><input type="text" id="cfg-own" placeholder="academica-wq"></div>
+      <div class="f"><label>Repositorio</label><input type="text" id="cfg-rep" placeholder="UNPHU-canvas-modules"></div>
+      <div class="f"><label>Personal Access Token</label><input type="password" id="cfg-tok" placeholder="ghp_xxxxxxxxxxxx"></div>
     </div>
-    <div class="row-3">
-      <div class="field">
-        <label>Usuario de GitHub</label>
-        <input type="text" id="cfg-owner" placeholder="thecesarchavezv">
-      </div>
-      <div class="field">
-        <label>Repositorio</label>
-        <input type="text" id="cfg-repo" placeholder="canvas-modules">
-      </div>
-      <div class="field">
-        <label>Personal Access Token</label>
-        <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxx">
-      </div>
-    </div>
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="saveConfig()">💾 Guardar y verificar</button>
+    <div class="bg">
+      <button class="btn btn-p" onclick="saveConfig()">💾 Guardar y verificar</button>
       <button class="btn" onclick="clearConfig()">🗑️ Limpiar</button>
     </div>
   </div>
-
   <div class="card">
-    <div class="card-title"><span class="icon">🌐</span> URL de GitHub Pages</div>
-    <p style="font-size:13px;color:var(--gray-500);margin-bottom:12px">Tus módulos publicados estarán disponibles en:</p>
-    <div class="url-display" id="ghPagesUrl">https://[usuario].github.io/[repositorio]/</div>
-    <p style="font-size:12px;color:var(--gray-400);margin-top:8px">⚠️ Asegúrate de tener GitHub Pages activado en tu repositorio (Settings → Pages → Branch: main)</p>
+    <div class="card-h">🌐 URL de GitHub Pages</div>
+    <div class="url-box" id="gh-url">https://[usuario].github.io/[repositorio]/</div>
+    <p style="font-size:12px;color:var(--g400);margin-top:7px">⚠️ Activa GitHub Pages: Settings → Pages → Branch: main</p>
   </div>
-
   <div class="card">
-    <div class="card-title"><span class="icon">🏛️</span> Configuración de Canvas</div>
-    <div class="alert alert-warning">
-      <span class="alert-icon">⚠️</span>
-      <div>Para que los iframes de GitHub Pages funcionen en Canvas, el administrador de tu institución debe agregar <code>[usuario].github.io</code> a la lista de dominios permitidos en <strong>Admin → Settings → Allowed Domains</strong>.</div>
-    </div>
-    <p style="font-size:13px;color:var(--gray-500)">Si no tienes acceso de administrador, contacta al equipo de TI de tu institución.</p>
+    <div class="card-h">🏛️ Canvas - Dominios permitidos</div>
+    <div class="al al-w">⚠️ Para que los iframes funcionen en Canvas, el administrador debe agregar <code>[usuario].github.io</code> en Admin → Settings → Allowed Domains.</div>
   </div>
-
 </div>
 </div>
 
-<!-- ============ TAB: CONSTRUCTOR ============ -->
-<div class="tab-panel" id="panel-builder">
-<div class="container">
-
-  <div id="builderAlerts"></div>
-
-  <!-- STEPS -->
+<!-- CONSTRUCTOR -->
+<div class="panel" id="p-bld">
+<div class="wrap">
+  <div id="bld-alerts"></div>
   <div class="steps">
-    <div class="step-item active" id="step-1" onclick="goBuilderStep(1)"><span class="step-num">1</span>Datos del módulo</div>
-    <div class="step-item" id="step-2" onclick="goBuilderStep(2)"><span class="step-num">2</span>Secciones</div>
-    <div class="step-item" id="step-3" onclick="goBuilderStep(3)"><span class="step-num">3</span>Publicar</div>
+    <div class="stp active" id="stp1" onclick="goStep(1)"><span class="stp-n">1</span>Datos del módulo</div>
+    <div class="stp" id="stp2" onclick="goStep(2)"><span class="stp-n">2</span>Secciones</div>
+    <div class="stp" id="stp3" onclick="goStep(3)"><span class="stp-n">3</span>Publicar</div>
   </div>
-
-  <!-- PASO 1: Datos del módulo -->
-  <div id="builder-step-1">
+  <div id="bp1">
     <div class="card">
-      <div class="card-title"><span class="icon">📋</span> Información del módulo</div>
-      <div class="row-3">
-        <div class="field">
-          <label>Número de módulo</label>
-          <input type="number" id="mod-num" value="1" min="1">
-        </div>
-        <div class="field">
-          <label>Color principal</label>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="text" id="mod-color" value="#0066cc" placeholder="#0066cc" style="flex:1" oninput="updateColorPreview()">
-            <input type="color" id="mod-color-picker" value="#0066cc" onchange="syncColor()" style="width:36px;height:36px;padding:2px;border-radius:4px;cursor:pointer;border:1px solid var(--gray-200)">
+      <div class="card-h">📋 Información del módulo</div>
+      <div class="r3">
+        <div class="f"><label>Número</label><input type="number" id="m-num" value="1" min="1"></div>
+        <div class="f"><label>Color principal</label>
+          <div style="display:flex;gap:7px;align-items:center">
+            <input type="text" id="m-col" value="#0066cc" style="flex:1" oninput="syncPicker()">
+            <input type="color" id="m-pic" value="#0066cc" onchange="syncText()" style="width:34px;height:34px;padding:2px;border:1px solid var(--g200);border-radius:4px;cursor:pointer">
           </div>
         </div>
-        <div class="field">
-          <label>Creado por</label>
-          <input type="text" id="mod-author" placeholder="Nombre del autor">
-        </div>
+        <div class="f"><label>Autor</label><input type="text" id="m-aut" placeholder="Nombre del autor"></div>
       </div>
-      <div class="field">
-        <label>Título del módulo</label>
-        <input type="text" id="mod-title" placeholder="Ej: Modelos de Negocios">
-      </div>
-      <div class="field">
-        <label>Descripción breve</label>
-        <textarea id="mod-desc" rows="2" placeholder="Descripción general del módulo y sus objetivos de aprendizaje..."></textarea>
-      </div>
-      <div class="field">
-        <label>Nota de pie de página</label>
-        <input type="text" id="mod-footer" value="Los recursos aquí publicados son exclusivos para uso educativo y no tienen fines de lucro.">
-      </div>
+      <div class="f"><label>Título</label><input type="text" id="m-tit" placeholder="Ej: Modelos de Negocios"></div>
+      <div class="f"><label>Descripción</label><textarea id="m-des" rows="2" placeholder="Objetivos de aprendizaje..."></textarea></div>
+      <div class="f"><label>Pie de página</label><input type="text" id="m-ftr" value="Los recursos aquí publicados son exclusivos para uso educativo y no tienen fines de lucro."></div>
     </div>
-    <div class="btn-group right">
-      <button class="btn btn-primary" onclick="goBuilderStep(2)">Siguiente: Agregar secciones →</button>
+    <div class="bg bg-r"><button class="btn btn-p" onclick="goStep(2)">Siguiente: Secciones →</button></div>
+  </div>
+  <div id="bp2" style="display:none">
+    <p style="font-size:12px;color:var(--g500);margin-bottom:10px">Selecciona el tipo de sección:</p>
+    <div class="tgrid">
+      <button class="tbtn" onclick="addSec('lec')"><span class="ti">📖</span>Lectura</button>
+      <button class="tbtn" onclick="addSec('rec')"><span class="ti">▶️</span>Video / Recurso</button>
+      <button class="tbtn" onclick="addSec('qui')"><span class="ti">🧠</span>Ejercicio</button>
+      <button class="tbtn" onclick="addSec('ref')"><span class="ti">📚</span>Referencias</button>
+    </div>
+    <div id="sec-list"><div class="empty"><div class="empty-i">📄</div><p>Aún no hay secciones.</p></div></div>
+    <div class="bg bg-b" style="margin-top:14px">
+      <button class="btn" onclick="goStep(1)">← Atrás</button>
+      <button class="btn btn-p" onclick="goStep(3)">Siguiente: Publicar →</button>
     </div>
   </div>
-
-  <!-- PASO 2: Secciones -->
-  <div id="builder-step-2" style="display:none">
-    <div class="section-heading">Tipo de sección a agregar</div>
-    <div class="section-type-grid">
-      <button class="section-type-btn" onclick="addSection('lectura')">
-        <span class="type-icon">📖</span>Lectura
-      </button>
-      <button class="section-type-btn" onclick="addSection('recurso')">
-        <span class="type-icon">▶️</span>Video / Recurso
-      </button>
-      <button class="section-type-btn" onclick="addSection('quiz')">
-        <span class="type-icon">🧠</span>Ejercicio
-      </button>
-      <button class="section-type-btn" onclick="addSection('referencias')">
-        <span class="type-icon">📚</span>Referencias
-      </button>
-    </div>
-
-    <div class="section-heading">Secciones del módulo</div>
-    <div id="sections-list">
-      <div class="empty-state">
-        <div class="empty-icon">📄</div>
-        <p>Aún no hay secciones. Agrega una arriba.</p>
-      </div>
-    </div>
-
-    <div class="btn-group between" style="margin-top:16px">
-      <button class="btn" onclick="goBuilderStep(1)">← Atrás</button>
-      <button class="btn btn-primary" onclick="goBuilderStep(3)">Siguiente: Publicar →</button>
-    </div>
-  </div>
-
-  <!-- PASO 3: Publicar -->
-  <div id="builder-step-3" style="display:none">
+  <div id="bp3" style="display:none">
     <div class="card">
-      <div class="card-title"><span class="icon">🚀</span> Resumen y publicación</div>
-      <div id="publish-summary"></div>
+      <div class="card-h">🚀 Resumen y publicación</div>
+      <div id="pub-sum"></div>
       <hr>
-      <div class="field">
+      <div class="f">
         <label>Nombre del archivo en GitHub</label>
-        <input type="text" id="pub-filename" placeholder="modulo-01-nombre.html">
-        <p style="font-size:11px;color:var(--gray-400);margin-top:4px">Sugerencia: modulo-01-titulo-corto.html (sin acentos ni espacios)</p>
+        <input type="text" id="pub-fn" placeholder="modulo-01-titulo.html">
+        <p style="font-size:11px;color:var(--g400);margin-top:3px">Sin acentos ni espacios. Ej: modulo-01-modelos-negocios.html</p>
       </div>
     </div>
-    <div id="publish-result"></div>
-    <div class="btn-group between">
-      <button class="btn" onclick="goBuilderStep(2)">← Atrás</button>
-      <button class="btn btn-success" onclick="publishModule()">⬆️ Publicar en GitHub</button>
+    <div id="pub-res"></div>
+    <div class="bg bg-b">
+      <button class="btn" onclick="goStep(2)">← Atrás</button>
+      <button class="btn btn-s" onclick="publishModule()">⬆️ Publicar en GitHub</button>
     </div>
   </div>
-
 </div>
 </div>
 
-<!-- ============ TAB: ADMIN ============ -->
-<div class="tab-panel" id="panel-admin">
-<div class="container">
-  <div class="btn-group" style="margin-bottom:16px;justify-content:space-between;align-items:center">
+<!-- ADMIN -->
+<div class="panel" id="p-adm">
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
     <h2 style="font-size:16px;font-weight:600">Módulos publicados</h2>
-    <button class="btn btn-sm" onclick="loadRegistry()">🔄 Actualizar</button>
+    <button class="btn btn-sm" onclick="loadAdmin()">🔄 Actualizar</button>
   </div>
-  <div id="admin-alerts"></div>
-  <div id="modules-list">
-    <div class="empty-state">
-      <div class="empty-icon">📦</div>
-      <p>Configura tu cuenta de GitHub para ver los módulos publicados.</p>
-    </div>
-  </div>
+  <div id="adm-alerts"></div>
+  <div id="adm-list"><div class="empty"><div class="empty-i">📦</div><p>Configura GitHub para ver los módulos.</p></div></div>
 </div>
 </div>
 
 <script>
-// ================================================
-// STATE
-// ================================================
-const state = {
-  config: {token:'', owner:'', repo:''},
-  sections: [],
-  sectionCounter: 0,
-  questionCounters: {},
-  refCounters: {}
-};
+(function(){
+'use strict';
+var CFG={owner:'',repo:'',token:''};
+var SECS=[];var SC=0;var QC=0;var RC=0;
 
-// ================================================
-// INIT
-// ================================================
-window.addEventListener('DOMContentLoaded', () => {
-  loadSavedConfig();
-  updateColorPreview();
+window.addEventListener('DOMContentLoaded',function(){
+  try{var s=localStorage.getItem('cc_cfg');if(s){CFG=JSON.parse(s);applyConfig();}}catch(e){}
 });
 
-// ================================================
-// TABS
-// ================================================
-function showTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  document.getElementById('tab-btn-' + name).classList.add('active');
-  if(name === 'admin') loadRegistry();
-}
-
-// ================================================
-// CONFIG
-// ================================================
-function loadSavedConfig() {
-  try {
-    const saved = localStorage.getItem('canvas_constructor_cfg');
-    if (saved) {
-      const cfg = JSON.parse(saved);
-      document.getElementById('cfg-owner').value = cfg.owner || '';
-      document.getElementById('cfg-repo').value = cfg.repo || '';
-      document.getElementById('cfg-token').value = cfg.token || '';
-      state.config = cfg;
-      updateStatus(true, cfg.owner + '/' + cfg.repo);
-      updateGHPagesUrl();
-    }
-  } catch(e) {}
-}
-
-function saveConfig() {
-  const owner = v('cfg-owner').trim();
-  const repo = v('cfg-repo').trim();
-  const token = v('cfg-token').trim();
-  if (!owner || !repo || !token) {
-    showAlert('configAlerts', 'danger', 'Completa todos los campos de configuración.');
-    return;
-  }
-  state.config = {owner, repo, token};
-  try { localStorage.setItem('canvas_constructor_cfg', JSON.stringify(state.config)); } catch(e){}
-  verifyConfig();
-}
-
-async function verifyConfig() {
-  showLoading('Verificando conexión...');
-  try {
-    const r = await ghGet(`repos/${state.config.owner}/${state.config.repo}`);
-    hideLoading();
-    if (r.name) {
-      updateStatus(true, state.config.owner + '/' + state.config.repo);
-      updateGHPagesUrl();
-      showAlert('configAlerts', 'success', `✅ Conectado correctamente a <strong>${r.full_name}</strong>`);
-    } else {
-      updateStatus(false, 'Error de conexión');
-      showAlert('configAlerts', 'danger', 'No se pudo conectar. Verifica el token y el nombre del repositorio.');
-    }
-  } catch(e) {
-    hideLoading();
-    updateStatus(false, 'Error');
-    showAlert('configAlerts', 'danger', 'Error de conexión: ' + e.message);
-  }
-}
-
-function clearConfig() {
-  ['cfg-owner','cfg-repo','cfg-token'].forEach(id => document.getElementById(id).value = '');
-  state.config = {token:'', owner:'', repo:''};
-  try { localStorage.removeItem('canvas_constructor_cfg'); } catch(e){}
-  updateStatus(false, 'Sin configurar');
-  document.getElementById('ghPagesUrl').textContent = 'https://[usuario].github.io/[repositorio]/';
-}
-
-function updateStatus(ok, text) {
-  document.getElementById('statusDot').className = 'status-dot' + (ok ? ' connected' : '');
-  document.getElementById('statusText').textContent = text;
-}
-
-function updateGHPagesUrl() {
-  const {owner, repo} = state.config;
-  if (owner && repo) {
-    document.getElementById('ghPagesUrl').textContent = `https://${owner}.github.io/${repo}/`;
-  }
-}
-
-// ================================================
-// BUILDER STEPS
-// ================================================
-function goBuilderStep(n) {
-  [1,2,3].forEach(i => {
-    document.getElementById(`builder-step-${i}`).style.display = i === n ? 'block' : 'none';
-    const st = document.getElementById(`step-${i}`);
-    st.classList.remove('active','done');
-    if (i < n) st.classList.add('done');
-    if (i === n) st.classList.add('active');
-  });
-  if (n === 3) buildPublishSummary();
-}
-
-// ================================================
-// SECTIONS
-// ================================================
-function addSection(tipo) {
-  state.sectionCounter++;
-  const id = `sec_${state.sectionCounter}`;
-  const num = state.sections.length + 1;
-  state.sections.push({id, tipo, num});
-  if (tipo === 'quiz') window[id + '_questions'] = [];
-  if (tipo === 'referencias') window[id + '_refs'] = [];
-  renderSections();
-}
-
-function removeSection(id) {
-  state.sections = state.sections.filter(s => s.id !== id);
-  state.sections.forEach((s,i) => s.num = i+1);
-  renderSections();
-}
-
-const typeMeta = {
-  lectura:{label:'Lectura',badge:'badge-lectura',icon:'📖'},
-  recurso:{label:'Video / Recurso',badge:'badge-recurso',icon:'▶️'},
-  quiz:{label:'Ejercicio',badge:'badge-quiz',icon:'🧠'},
-  referencias:{label:'Referencias',badge:'badge-referencias',icon:'📚'}
+window.showPanel=function(n){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('p-'+n).classList.add('active');
+  document.getElementById('tb-'+n).classList.add('active');
+  if(n==='adm')loadAdmin();
 };
 
-function renderSections() {
-  const el = document.getElementById('sections-list');
-  if (!state.sections.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📄</div><p>Aún no hay secciones.</p></div>';
-    return;
+window.saveConfig=function(){
+  var own=g('cfg-own'),rep=g('cfg-rep'),tok=g('cfg-tok');
+  if(!own||!rep||!tok){showMsg('cfg-alerts','al-d','❌ Completa todos los campos.');return;}
+  CFG={owner:own,repo:rep,token:tok};
+  try{localStorage.setItem('cc_cfg',JSON.stringify(CFG));}catch(e){}
+  verifyConfig();
+};
+
+window.clearConfig=function(){
+  ['cfg-own','cfg-rep','cfg-tok'].forEach(function(id){document.getElementById(id).value='';});
+  CFG={owner:'',repo:'',token:''};
+  try{localStorage.removeItem('cc_cfg');}catch(e){}
+  setStatus(false,'Sin configurar');
+  document.getElementById('gh-url').textContent='https://[usuario].github.io/[repositorio]/';
+};
+
+function applyConfig(){
+  var ids=['cfg-own','cfg-rep','cfg-tok'];
+  var vals=[CFG.owner,CFG.repo,CFG.token];
+  ids.forEach(function(id,i){var el=document.getElementById(id);if(el)el.value=vals[i]||'';});
+  setStatus(true,CFG.owner+'/'+CFG.repo);updateGHUrl();
+}
+
+async function verifyConfig(){
+  spin('Verificando conexión...');
+  try{
+    var r=await ghGet('repos/'+CFG.owner+'/'+CFG.repo);
+    stopSpin();
+    if(r&&r.name){setStatus(true,CFG.owner+'/'+CFG.repo);updateGHUrl();showMsg('cfg-alerts','al-s','✅ Conectado a <strong>'+r.full_name+'</strong>');}
+    else{setStatus(false,'Error');showMsg('cfg-alerts','al-d','❌ No se pudo conectar.');}
+  }catch(e){stopSpin();setStatus(false,'Error');showMsg('cfg-alerts','al-d','❌ Error: '+e.message);}
+}
+
+function setStatus(ok,txt){document.getElementById('dot').className='dot'+(ok?' on':'');document.getElementById('conn-txt').textContent=txt;}
+function updateGHUrl(){if(CFG.owner&&CFG.repo)document.getElementById('gh-url').textContent='https://'+CFG.owner+'.github.io/'+CFG.repo+'/';}
+
+window.syncPicker=function(){try{document.getElementById('m-pic').value=g('m-col');}catch(e){}};
+window.syncText=function(){document.getElementById('m-col').value=g('m-pic');};
+
+window.goStep=function(n){
+  [1,2,3].forEach(function(i){
+    document.getElementById('bp'+i).style.display=i===n?'block':'none';
+    var s=document.getElementById('stp'+i);s.classList.remove('active','done');
+    if(i<n)s.classList.add('done');if(i===n)s.classList.add('active');
+  });
+  if(n===3)buildSummary();
+};
+
+window.addSec=function(tipo){
+  SC++;var id='s'+SC;SECS.push({id:id,tipo:tipo,num:SECS.length+1});
+  if(tipo==='qui')window['qs_'+id]=[];
+  if(tipo==='ref')window['rs_'+id]=[];
+  renderSecs();
+};
+
+window.removeSec=function(id){
+  SECS=SECS.filter(function(s){return s.id!==id;});
+  SECS.forEach(function(s,i){s.num=i+1;});renderSecs();
+};
+
+var TL={lec:{lab:'Lectura',badge:'b-lec',ic:'📖'},rec:{lab:'Video/Recurso',badge:'b-rec',ic:'▶️'},qui:{lab:'Ejercicio',badge:'b-qui',ic:'🧠'},ref:{lab:'Referencias',badge:'b-ref',ic:'📚'}};
+
+function renderSecs(){
+  var el=document.getElementById('sec-list');
+  if(!SECS.length){el.innerHTML='<div class="empty"><div class="empty-i">📄</div><p>Sin secciones aún.</p></div>';return;}
+  el.innerHTML=SECS.map(function(s){return secCard(s);}).join('');
+}
+
+function secCard(s){
+  var m=TL[s.tipo];var body='';
+  if(s.tipo==='lec'){
+    body='<div class="r2"><div class="f"><label>Título</label><input type="text" id="'+s.id+'_t" placeholder="Introducción al tema"></div><div class="f"><label>Subtítulo</label><input type="text" id="'+s.id+'_s" placeholder="Conceptos clave"></div></div><div class="f"><label>Contenido (HTML permitido)</label><textarea id="'+s.id+'_c" rows="5" placeholder="Escribe aquí el contenido..."></textarea></div>';
+  }else if(s.tipo==='rec'){
+    body='<div class="r2"><div class="f"><label>Título</label><input type="text" id="'+s.id+'_t" placeholder="Video introductorio"></div><div class="f"><label>Subtítulo</label><input type="text" id="'+s.id+'_s" placeholder="Conceptos fundamentales"></div></div><div class="f"><label>URL del recurso (Vimeo, Genial.ly, YouTube embed...)</label><input type="text" id="'+s.id+'_url" placeholder="https://player.vimeo.com/video/..."></div><div class="r2"><div class="f"><label>Descripción transcripción</label><textarea id="'+s.id+'_td" rows="2" placeholder="Breve descripción del recurso..."></textarea></div><div><div class="f"><label>URL transcripción</label><input type="text" id="'+s.id+'_tl" placeholder="https://..."></div><div class="f"><label>Texto del enlace</label><input type="text" id="'+s.id+'_tn" placeholder="Ver transcripción"></div></div></div>';
+  }else if(s.tipo==='qui'){
+    body='<div class="r2"><div class="f"><label>Título</label><input type="text" id="'+s.id+'_t" placeholder="Ejercicio de autoestudio"></div><div class="f"><label>Subtítulo</label><input type="text" id="'+s.id+'_s" placeholder="Evalúa tu comprensión"></div></div><div class="f"><label>Introducción</label><input type="text" id="'+s.id+'_qi" placeholder="Responde las siguientes preguntas..."></div><div style="font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;margin:10px 0 6px">Preguntas</div><div id="'+s.id+'_ql"></div><div class="bg" style="margin-top:7px"><button class="btn btn-sm" onclick="addQ(\''+s.id+'\',\'mc\')">+ Opción múltiple</button><button class="btn btn-sm" onclick="addQ(\''+s.id+'\',\'vf\')">+ V / F</button><button class="btn btn-sm" onclick="addQ(\''+s.id+'\',\'txt\')">+ Respuesta abierta</button></div>';
+  }else if(s.tipo==='ref'){
+    body='<div class="f"><label>Título</label><input type="text" id="'+s.id+'_t" value="Referencias"></div><div id="'+s.id+'_rl"></div><button class="btn btn-sm" style="margin-top:5px" onclick="addRef(\''+s.id+'\')">+ Agregar referencia</button>';
   }
-  el.innerHTML = state.sections.map(s => renderSectionCard(s)).join('');
+  return '<div class="sc" id="c_'+s.id+'"><div class="sc-h"><div class="sc-n">'+s.num+'</div><span class="badge '+m.badge+'">'+m.ic+' '+m.lab+'</span><span class="sc-lbl">Sección '+s.num+'</span><button class="btn btn-sm btn-d" onclick="removeSec(\''+s.id+'\')">🗑️</button></div><div class="sc-b">'+body+'</div></div>';
 }
 
-function renderSectionCard(s) {
-  const m = typeMeta[s.tipo];
-  let body = '';
+window.addQ=function(sid,tipo){
+  QC++;var qid='q'+QC;var k='qs_'+sid;if(!window[k])window[k]=[];
+  if(tipo==='mc')window['o_'+qid]=[{t:'',c:false},{t:'',c:false},{t:'',c:false},{t:'',c:false}];
+  window[k].push({qid:qid,tipo:tipo});renderQs(sid);
+};
+window.removeQ=function(sid,qid){
+  var k='qs_'+sid;window[k]=window[k].filter(function(q){return q.qid!==qid;});renderQs(sid);
+};
+window.updOpt=function(qid,i,val){var o=window['o_'+qid]||[];if(o[i])o[i].t=val;};
+window.setCorr=function(qid,i){var o=window['o_'+qid]||[];o.forEach(function(op,j){op.c=j===i;});};
+window.addOpt=function(qid,sid){var o=window['o_'+qid]||[];o.push({t:'',c:false});renderQs(sid);};
 
-  if (s.tipo === 'lectura') {
-    body = `
-      <div class="row-2">
-        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Introducción al tema"></div>
-        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Conceptos clave"></div>
-      </div>
-      <div class="field"><label>Contenido (HTML permitido)</label><textarea id="${s.id}_contenido" rows="5" placeholder="<p>Tu contenido aquí...</p>\n<ul><li>Punto 1</li></ul>"></textarea></div>`;
-  } else if (s.tipo === 'recurso') {
-    body = `
-      <div class="row-2">
-        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Video introductorio"></div>
-        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Conceptos fundamentales"></div>
-      </div>
-      <div class="field"><label>URL del recurso (Vimeo, Genial.ly, YouTube embed, etc.)</label><input type="text" id="${s.id}_iframeUrl" placeholder="https://player.vimeo.com/video/..."></div>
-      <div class="row-2">
-        <div class="field"><label>Descripción de la transcripción</label><textarea id="${s.id}_transcripcionTexto" rows="2" placeholder="Breve descripción del recurso..."></textarea></div>
-        <div>
-          <div class="field"><label>URL de transcripción</label><input type="text" id="${s.id}_linkTranscripcion" placeholder="https://..."></div>
-          <div class="field"><label>Texto del enlace</label><input type="text" id="${s.id}_labelTranscripcion" placeholder="Ver transcripción completa"></div>
-        </div>
-      </div>`;
-  } else if (s.tipo === 'quiz') {
-    body = `
-      <div class="row-2">
-        <div class="field"><label>Título</label><input type="text" id="${s.id}_titulo" placeholder="Ej: Ejercicio de autoestudio"></div>
-        <div class="field"><label>Subtítulo</label><input type="text" id="${s.id}_subtitulo" placeholder="Ej: Evalúa tu comprensión"></div>
-      </div>
-      <div class="field"><label>Texto introductorio</label><input type="text" id="${s.id}_quizIntro" placeholder="Responde las siguientes preguntas para verificar tu comprensión..."></div>
-      <div class="section-heading" style="margin-top:12px">Preguntas</div>
-      <div id="${s.id}_qlist"></div>
-      <div class="btn-group" style="margin-top:8px;flex-wrap:wrap">
-        <button class="btn btn-sm" onclick="addQuestion('${s.id}','mc')">+ Opción múltiple</button>
-        <button class="btn btn-sm" onclick="addQuestion('${s.id}','vf')">+ Verdadero / Falso</button>
-        <button class="btn btn-sm" onclick="addQuestion('${s.id}','texto')">+ Respuesta abierta</button>
-      </div>`;
-  } else if (s.tipo === 'referencias') {
-    body = `
-      <div class="field"><label>Título de sección</label><input type="text" id="${s.id}_titulo" value="Referencias" placeholder="Referencias"></div>
-      <div id="${s.id}_reflist"></div>
-      <button class="btn btn-sm" onclick="addRef('${s.id}')" style="margin-top:6px">+ Agregar referencia</button>`;
-  }
-
-  return `<div class="section-card" id="card_${s.id}">
-    <div class="section-card-header">
-      <div class="section-num">${s.num}</div>
-      <span class="section-badge ${m.badge}">${m.icon} ${m.label}</span>
-      <span class="section-label" id="${s.id}_label">Sección ${s.num}</span>
-      <button class="btn btn-sm btn-danger" onclick="removeSection('${s.id}')">🗑️</button>
-    </div>
-    <div class="section-card-body">${body}</div>
-  </div>`;
-}
-
-// Questions
-let qGlobalCount = 0;
-function addQuestion(secId, tipo) {
-  qGlobalCount++;
-  const qId = `q_${qGlobalCount}`;
-  const key = secId + '_questions';
-  if (!window[key]) window[key] = [];
-  // Default 4 options for MC
-  if (tipo === 'mc') window[qId + '_opts'] = ['','','',''];
-  window[key].push({qId, tipo});
-  renderQuestions(secId);
-}
-
-function removeQuestion(secId, qId) {
-  const key = secId + '_questions';
-  window[key] = window[key].filter(q => q.qId !== qId);
-  renderQuestions(secId);
-}
-
-function renderQuestions(secId) {
-  const key = secId + '_questions';
-  const qs = window[key] || [];
-  const el = document.getElementById(secId + '_qlist');
-  if (!el) return;
-  const qTypes = {mc:'Opción múltiple', vf:'Verdadero / Falso', texto:'Respuesta abierta'};
-
-  el.innerHTML = qs.map((q,i) => {
-    let extra = '';
-    if (q.tipo === 'mc') {
-      const opts = window[q.qId + '_opts'] || ['','','',''];
-      extra = `<div class="field" style="margin-top:8px">
-        <label>Opciones (selecciona la correcta con el radio)</label>
-        <div class="opts-list" id="${q.qId}_optslist">
-          ${opts.map((o,oi) => `
-            <div class="opt-row">
-              <input type="radio" name="${q.qId}_correct" value="${oi}" ${o._correct?'checked':''} onchange="setCorrectOpt('${q.qId}',${oi})">
-              <input type="text" value="${o.text||''}" placeholder="Opción ${String.fromCharCode(65+oi)}" onchange="updateOpt('${q.qId}',${oi},this.value)">
-            </div>`).join('')}
-        </div>
-        <button class="add-opt-btn" onclick="addOpt('${q.qId}')">+ Agregar opción</button>
-      </div>`;
-    } else if (q.tipo === 'vf') {
-      extra = `<div class="field" style="margin-top:8px"><label>Respuesta correcta</label>
-        <select id="${q.qId}_vf"><option value="true">Verdadero</option><option value="false">Falso</option></select></div>`;
+function renderQs(sid){
+  var k='qs_'+sid;var qs=window[k]||[];var el=document.getElementById(sid+'_ql');if(!el)return;
+  var ql={mc:'Opción múltiple',vf:'Verdadero/Falso',txt:'Respuesta abierta'};
+  el.innerHTML=qs.map(function(q,i){
+    var extra='';
+    if(q.tipo==='mc'){
+      var opts=window['o_'+q.qid]||[];
+      extra='<div class="f" style="margin-top:8px"><label>Opciones (radio = correcta)</label><div class="opts">'+opts.map(function(o,j){return '<div class="opt-r"><input type="radio" name="c_'+q.qid+'" value="'+j+'" '+(o.c?'checked':'')+' onchange="setCorr(\''+q.qid+'\','+j+')"><input type="text" value="'+o.t+'" placeholder="Opción '+(j+1)+'" oninput="updOpt(\''+q.qid+'\','+j+',this.value)"></div>';}).join('')+'</div><button class="add-o" onclick="addOpt(\''+q.qid+'\',\''+sid+'\')">+ Agregar opción</button></div>';
+    }else if(q.tipo==='vf'){
+      extra='<div class="f" style="margin-top:8px"><label>Respuesta correcta</label><select id="'+q.qid+'_vf"><option value="true">Verdadero</option><option value="false">Falso</option></select></div>';
     }
-
-    return `<div class="q-item">
-      <div class="q-header">
-        <span class="q-label">Pregunta ${i+1} · ${qTypes[q.tipo]}</span>
-        <button class="btn btn-sm btn-danger" onclick="removeQuestion('${secId}','${q.qId}')">✕</button>
-      </div>
-      <div class="field"><label>Enunciado</label><input type="text" id="${q.qId}_text" placeholder="¿Cuál es...?"></div>
-      ${extra}
-      <div class="field"><label>Retroalimentación</label><input type="text" id="${q.qId}_feedback" placeholder="Explicación de la respuesta correcta..."></div>
-    </div>`;
-  }).join('') || '<p style="font-size:12px;color:var(--gray-400);padding:4px 0">Sin preguntas aún.</p>';
+    return '<div class="qi"><div class="qi-h"><span class="qi-l">Pregunta '+(i+1)+' · '+ql[q.tipo]+'</span><button class="btn btn-sm btn-d" onclick="removeQ(\''+sid+'\',\''+q.qid+'\')">✕</button></div><div class="f"><label>Enunciado</label><input type="text" id="'+q.qid+'_p" placeholder="¿Cuál es...?"></div>'+extra+'<div class="f"><label>Retroalimentación</label><input type="text" id="'+q.qid+'_fb" placeholder="Explicación de la respuesta correcta..."></div></div>';
+  }).join('')||'<p style="font-size:12px;color:var(--g400)">Sin preguntas aún.</p>';
 }
 
-function updateOpt(qId, idx, value) {
-  const opts = window[qId + '_opts'] || [];
-  if (!opts[idx]) opts[idx] = {};
-  opts[idx].text = value;
-  window[qId + '_opts'] = opts;
+window.addRef=function(sid){
+  RC++;var rid='r'+RC;var k='rs_'+sid;if(!window[k])window[k]=[];window[k].push(rid);renderRefs(sid);
+};
+window.removeRef=function(sid,rid){
+  var k='rs_'+sid;window[k]=window[k].filter(function(r){return r!==rid;});renderRefs(sid);
+};
+function renderRefs(sid){
+  var k='rs_'+sid;var rs=window[k]||[];var el=document.getElementById(sid+'_rl');if(!el)return;
+  el.innerHTML=rs.map(function(rid,i){return '<div class="ref-r"><input type="text" id="'+rid+'_v" placeholder="'+(i+1)+'. Autor (Año). Título..."><button class="btn btn-sm btn-d" onclick="removeRef(\''+sid+'\',\''+rid+'\')">✕</button></div>';}).join('');
 }
 
-function setCorrectOpt(qId, idx) {
-  const opts = window[qId + '_opts'] || [];
-  opts.forEach((o,i) => { if(typeof o === 'object') o._correct = i === idx; });
-  window[qId + '_opts'] = opts;
+function buildSummary(){
+  var num=g('m-num')||'1';var tit=g('m-tit')||'(Sin título)';
+  var qT=SECS.filter(function(s){return s.tipo==='qui';}).reduce(function(a,s){return a+(window['qs_'+s.id]||[]).length;},0);
+  document.getElementById('pub-sum').innerHTML='<div class="r3"><div><span style="font-size:11px;color:var(--g400);font-weight:700;text-transform:uppercase">Módulo</span><br><strong style="font-size:16px">'+num+'</strong></div><div><span style="font-size:11px;color:var(--g400);font-weight:700;text-transform:uppercase">Título</span><br><strong>'+tit+'</strong></div><div><span style="font-size:11px;color:var(--g400);font-weight:700;text-transform:uppercase">Contenido</span><br><strong>'+SECS.length+' secciones · '+qT+' preguntas</strong></div></div>';
+  var slug=tit.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').substring(0,40);
+  document.getElementById('pub-fn').value='modulo-'+String(num).padStart(2,'0')+'-'+slug+'.html';
 }
 
-function addOpt(qId) {
-  const opts = window[qId + '_opts'] || [];
-  opts.push({text:'', _correct:false});
-  window[qId + '_opts'] = opts;
-  // find section and re-render
-  for (const s of state.sections) {
-    const qs = window[s.id + '_questions'] || [];
-    if (qs.find(q => q.qId === qId)) { renderQuestions(s.id); break; }
-  }
-}
-
-// References
-let refGlobalCount = 0;
-function addRef(secId) {
-  refGlobalCount++;
-  const rId = `ref_${refGlobalCount}`;
-  const key = secId + '_refs';
-  if (!window[key]) window[key] = [];
-  window[key].push(rId);
-  renderRefs(secId);
-}
-
-function removeRef(secId, rId) {
-  const key = secId + '_refs';
-  window[key] = window[key].filter(r => r !== rId);
-  renderRefs(secId);
-}
-
-function renderRefs(secId) {
-  const key = secId + '_refs';
-  const rs = window[key] || [];
-  const el = document.getElementById(secId + '_reflist');
-  if (!el) return;
-  el.innerHTML = rs.map((rId,i) => `
-    <div class="ref-item">
-      <input type="text" id="${rId}_text" placeholder="${i+1}. Autor (Año). Título del recurso...">
-      <button class="btn btn-sm btn-danger btn-icon" onclick="removeRef('${secId}','${rId}')">✕</button>
-    </div>`).join('');
-}
-
-// ================================================
-// COLOR
-// ================================================
-function syncColor() {
-  const picker = document.getElementById('mod-color-picker');
-  document.getElementById('mod-color').value = picker.value;
-}
-function updateColorPreview() {
-  const col = document.getElementById('mod-color').value;
-  try { document.getElementById('mod-color-picker').value = col; } catch(e){}
-}
-
-// ================================================
-// PUBLISH SUMMARY
-// ================================================
-function buildPublishSummary() {
-  const num = v('mod-num') || '1';
-  const title = v('mod-title') || '(Sin título)';
-  const sCount = state.sections.length;
-  const qCount = state.sections.filter(s=>s.tipo==='quiz')
-    .reduce((a,s) => a + (window[s.id+'_questions']||[]).length, 0);
-
-  document.getElementById('publish-summary').innerHTML = `
-    <div class="row-3">
-      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Módulo</span><br><strong style="font-size:15px">${num}</strong></div>
-      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Título</span><br><strong>${title}</strong></div>
-      <div><span style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase">Secciones</span><br><strong>${sCount} secciones · ${qCount} preguntas</strong></div>
-    </div>`;
-
-  // Suggest filename
-  const slug = title.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
-    .substring(0, 40);
-  const padded = String(num).padStart(2,'0');
-  document.getElementById('pub-filename').value = `modulo-${padded}-${slug}.html`;
-}
-
-// ================================================
-// PUBLISH TO GITHUB
-// ================================================
-async function publishModule() {
-  if (!state.config.token) {
-    showAlert('builderAlerts', 'danger', 'Primero configura tus credenciales de GitHub en la pestaña Configuración.');
-    return;
-  }
-
-  const filename = v('pub-filename').trim();
-  if (!filename.endsWith('.html')) {
-    showAlert('builderAlerts', 'warning', 'El nombre del archivo debe terminar en .html');
-    return;
-  }
-
-  showLoading('Generando HTML del módulo...');
-
-  const moduleData = collectModuleData();
-  const htmlContent = buildModuleHTML(moduleData);
-
-  try {
-    showLoading('Subiendo módulo a GitHub...');
-    // Check if file exists (for SHA)
-    let existingSha = null;
-    try {
-      const existing = await ghGet(`repos/${state.config.owner}/${state.config.repo}/contents/${filename}`);
-      existingSha = existing.sha;
-    } catch(e) { /* File doesn't exist yet, that's fine */ }
-
-    // Upload module HTML
-    await ghPut(filename, htmlContent, `Publicar ${filename}`, existingSha);
-
-    // Update registry
-    showLoading('Actualizando registro...');
-    const {modules, sha: regSha} = await getRegistry();
-    const existingIdx = modules.findIndex(m => m.filename === filename);
-    const ghPagesUrl = `https://${state.config.owner}.github.io/${state.config.repo}/${filename}`;
-    const iframeCode = `<iframe src="${ghPagesUrl}" style="width:100%;height:100vh;border:none;display:block;"></iframe>`;
-    const entry = {
-      filename,
-      numero: moduleData.numero,
-      titulo: moduleData.titulo,
-      author: v('mod-author') || 'Sin especificar',
-      url: ghPagesUrl,
-      iframeCode,
-      publishedAt: new Date().toISOString()
-    };
-    if (existingIdx >= 0) modules[existingIdx] = entry;
-    else modules.push(entry);
-    await saveRegistry(modules, regSha);
-
-    hideLoading();
-
-    // Show success
-    window._lastIframeCode = iframeCode;
-    window._lastGhPagesUrl = ghPagesUrl;
-    document.getElementById('publish-result').innerHTML = `
-      <div class="publish-result">
-        <div class="publish-result-title">✅ ¡Módulo publicado correctamente!</div>
-        <p style="font-size:13px;color:#065f46;margin-bottom:8px">URL del módulo (GitHub Pages):</p>
-        <div class="url-display">${ghPagesUrl}</div>
-        <p style="font-size:13px;color:#065f46;margin:12px 0 6px">Código para pegar en Canvas (RCE → HTML):</p>
-        <div class="iframe-code" id="iframeCodeDisplay"></div>
-        <div class="btn-group" style="margin-top:12px">
-          <button class="btn btn-sm btn-primary" onclick="copyLastIframe(this)">📋 Copiar iframe para Canvas</button>
-          <a href="${ghPagesUrl}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
-        </div>
-        <p style="font-size:11px;color:#6ee7b7;margin-top:10px">⏱️ GitHub Pages puede tardar 1-3 minutos en actualizar. Recarga la URL del módulo si ves 404.</p>
-      </div>`;
-    document.getElementById('iframeCodeDisplay').textContent = iframeCode;
-  } catch(e) {
-    hideLoading();
-    showAlert('builderAlerts', 'danger', 'Error al publicar: ' + e.message);
-  }
-}
-
-function collectModuleData() {
-  return {
-    numero: parseInt(v('mod-num')) || 1,
-    titulo: v('mod-title') || 'Módulo',
-    descripcion: v('mod-desc') || '',
-    color: v('mod-color') || '#0066cc',
-    footer: v('mod-footer') || '',
-    secciones: state.sections.map((s,i) => {
-      const base = {
-        id: `s${i+1}`,
-        numero: i+1,
-        titulo: v(`${s.id}_titulo`) || typeMeta[s.tipo].label,
-        subtitulo: v(`${s.id}_subtitulo`) || '',
-        tipo: s.tipo
-      };
-      if (s.tipo === 'lectura') {
-        base.contenido = v(`${s.id}_contenido`) || '<p>Contenido de la sección.</p>';
-      } else if (s.tipo === 'recurso') {
-        base.iframeUrl = v(`${s.id}_iframeUrl`) || '';
-        base.transcripcionTexto = v(`${s.id}_transcripcionTexto`) || '';
-        base.linkTranscripcion = v(`${s.id}_linkTranscripcion`) || '#';
-        base.labelTranscripcion = v(`${s.id}_labelTranscripcion`) || 'Ver transcripción';
-      } else if (s.tipo === 'quiz') {
-        base.quizIntro = v(`${s.id}_quizIntro`) || 'Responde las siguientes preguntas.';
-        const qs = window[`${s.id}_questions`] || [];
-        base.preguntas = qs.map((q,qi) => {
-          const preg = {
-            id: `q${qi+1}_s${i+1}`,
-            pregunta: v(`${q.qId}_text`) || `Pregunta ${qi+1}`,
-            tipo: q.tipo === 'mc' ? 'multiple-choice' : q.tipo === 'vf' ? 'verdadero-falso' : 'texto',
-            feedback: v(`${q.qId}_feedback`) || ''
-          };
-          if (q.tipo === 'mc') {
-            const opts = window[`${q.qId}_opts`] || [];
-            preg.opciones = opts.map((o,oi) => ({id:String.fromCharCode(97+oi), texto:o.text||`Opción ${oi+1}`}));
-            const ci = opts.findIndex(o => o._correct);
-            preg.respuestaCorrecta = ci >= 0 ? String.fromCharCode(97+ci) : 'a';
-          } else if (q.tipo === 'vf') {
-            const el = document.getElementById(`${q.qId}_vf`);
-            preg.respuestaCorrecta = el ? el.value === 'true' : true;
-          } else {
-            preg.esRespuestaAbierta = true;
-          }
+function collect(){
+  return{
+    numero:parseInt(g('m-num'))||1,titulo:g('m-tit')||'Módulo',descripcion:g('m-des')||'',
+    color:g('m-col')||'#0066cc',footer:g('m-ftr')||'',
+    secciones:SECS.map(function(s,i){
+      var base={id:'s'+(i+1),numero:i+1,titulo:g(s.id+'_t')||TL[s.tipo].lab,subtitulo:g(s.id+'_s')||'',
+        tipo:s.tipo==='lec'?'lectura':s.tipo==='rec'?'recurso':s.tipo==='qui'?'quiz':'referencias'};
+      if(s.tipo==='lec'){base.contenido=g(s.id+'_c')||'<p>Contenido.</p>';}
+      else if(s.tipo==='rec'){base.iframeUrl=g(s.id+'_url')||'';base.transcripcionTexto=g(s.id+'_td')||'';base.linkTranscripcion=g(s.id+'_tl')||'#';base.labelTranscripcion=g(s.id+'_tn')||'Ver transcripción';}
+      else if(s.tipo==='qui'){
+        base.quizIntro=g(s.id+'_qi')||'Responde las siguientes preguntas.';
+        base.preguntas=(window['qs_'+s.id]||[]).map(function(q,qi){
+          var preg={id:'q'+(qi+1)+'_s'+(i+1),pregunta:g(q.qid+'_p')||'Pregunta '+(qi+1),
+            tipo:q.tipo==='mc'?'multiple-choice':q.tipo==='vf'?'verdadero-falso':'texto',feedback:g(q.qid+'_fb')||''};
+          if(q.tipo==='mc'){var o=window['o_'+q.qid]||[];preg.opciones=o.map(function(op,oi){return{id:String.fromCharCode(97+oi),texto:op.t||'Opción '+(oi+1)};});var ci=o.findIndex(function(op){return op.c;});preg.respuestaCorrecta=ci>=0?String.fromCharCode(97+ci):'a';}
+          else if(q.tipo==='vf'){var el=document.getElementById(q.qid+'_vf');preg.respuestaCorrecta=el?el.value==='true':true;}
+          else{preg.esRespuestaAbierta=true;}
           return preg;
         });
-      } else if (s.tipo === 'referencias') {
-        const rs = window[`${s.id}_refs`] || [];
-        base.referencias = rs.map((rId,ri) => ({id:`ref${ri+1}`, texto:v(`${rId}_text`) || `Referencia ${ri+1}`}));
+      }else if(s.tipo==='ref'){
+        base.referencias=(window['rs_'+s.id]||[]).map(function(rid,ri){return{id:'ref'+(ri+1),texto:g(rid+'_v')||'Referencia '+(ri+1)};});
       }
       return base;
     })
   };
 }
 
-// ================================================
-// HTML GENERATOR
-// ================================================
-function buildModuleHTML(d) {
-  const cfg = JSON.stringify(d, null, 2);
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Módulo ${d.numero} - ${d.titulo}</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--p:${d.color};--pd:${d.color}cc;--s:#10b981;--d:#ef4444;--li:#f8fafc;--g:#64748b;--dk:#1e293b;--b:#e2e8f0}
-body{font-family:'Segoe UI',-apple-system,sans-serif;color:var(--dk);background:var(--li);line-height:1.6}
-.mc{max-width:900px;margin:0 auto;padding:40px 20px}
-.mh{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,.1);margin-bottom:24px;border-left:6px solid var(--p)}
-.mn{display:inline-block;background:var(--p);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:10px}
-.mt{font-size:28px;font-weight:700;margin-bottom:10px}
-.md{color:var(--g);font-size:14px}
-.ps{background:#fff;padding:16px 24px;border-radius:10px;margin-bottom:24px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-.pl{font-size:11px;font-weight:600;color:var(--g);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
-.pb{width:100%;height:6px;background:var(--b);border-radius:3px;overflow:hidden}
-.pf{height:100%;background:var(--p);width:0%;transition:width .4s ease}
-.sc{display:flex;flex-direction:column;gap:12px}
-.sec{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07);transition:box-shadow .3s}
-.sec:hover{box-shadow:0 4px 10px rgba(0,0,0,.1)}
-.sec.completed{border-left:4px solid var(--s)}
-.sh{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none;transition:background .2s}
-.sh:hover{background:var(--li)}
-.sn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--p);color:#fff;border-radius:8px;font-weight:700;font-size:15px;flex-shrink:0}
-.sec.completed .sn{background:var(--s)}
-.sw{flex:1}
-.st{font-size:16px;font-weight:600;margin-bottom:2px}
-.ss{font-size:12px;color:var(--g)}
-.sg{font-size:20px;color:var(--g);transition:transform .3s;flex-shrink:0}
-.sec.active .sg{transform:rotate(180deg);color:var(--p)}
-.scont{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--b)}
-.sec.active .scont{max-height:3000px}
-.sb{padding:24px}
-.cr{line-height:1.8}.cr p{margin-bottom:14px}.cr ul,.cr ol{margin-left:20px;margin-bottom:14px}.cr li{margin-bottom:6px}
-.ri{width:100%;min-height:480px;border:1px solid var(--b);border-radius:8px;margin-bottom:12px}
-.rt{background:var(--li);padding:14px;border-radius:8px;border-left:4px solid var(--p);margin-top:12px}
-.rl{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
-.rlink{display:inline-block;margin-top:12px;padding:10px 20px;background:var(--p);color:#fff;text-decoration:none;border-radius:7px;font-size:13px;font-weight:600}
-.qc{display:flex;flex-direction:column;gap:20px}
-.qi-intro{background:var(--p);color:#fff;padding:20px;border-radius:8px;font-size:13px}
-.qi{background:var(--li);padding:20px;border-radius:8px;border:2px solid transparent;transition:all .3s}
-.qi.answered{border-color:var(--s);background:#f0fdf4}
-.qn{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
-.qt{font-size:15px;font-weight:600;margin-bottom:14px}
-.ao{display:flex;flex-direction:column;gap:10px}
-.opt{display:flex;align-items:center;padding:10px 14px;background:#fff;border:2px solid var(--b);border-radius:7px;cursor:pointer;gap:10px;transition:all .2s}
-.opt:hover{border-color:var(--p)}
-.opt input{accent-color:var(--p);width:17px;height:17px}
-.ti{width:100%;padding:10px 14px;border:2px solid var(--b);border-radius:7px;font-size:13px;font-family:inherit}
-.ti:focus{outline:none;border-color:var(--p)}
-.fb{margin-top:10px;padding:10px 14px;border-radius:7px;font-size:13px;display:none}
-.fb.show{display:block}
-.fb.ok{background:rgba(16,185,129,.1);border-left:4px solid var(--s);color:#047857}
-.fb.info{background:rgba(0,102,204,.1);border-left:4px solid var(--p);color:var(--pd)}
-.rl-list{list-style:none;padding:0}
-.rl-list li{padding:10px 0;border-bottom:1px solid var(--b);font-size:13px;line-height:1.6}
-.rl-list li:last-child{border-bottom:none}
-.mf{text-align:center;padding:24px;color:var(--g);font-size:11px;margin-top:32px}
-@media(max-width:640px){.mc{padding:16px}.mh{padding:20px}.mt{font-size:22px}.sh{padding:14px}.sb{padding:16px}}
-</style>
-</head>
-<body>
-<div class="mc">
-<div class="mh">
-<div class="mn" id="mn"></div>
-<h1 class="mt" id="mt"></h1>
-<p class="md" id="md"></p>
-</div>
-<div class="ps">
-<div class="pl">Progreso del módulo</div>
-<div class="pb"><div class="pf" id="pf"></div></div>
-</div>
-<div class="sc" id="sc"></div>
-<div class="mf">${d.footer}</div>
-</div>
-<script type="application/json" id="mc_data">${cfg}</script>
-<script>
-const C=JSON.parse(document.getElementById('mc_data').textContent);
-let R={};
-function init(){
-  document.getElementById('mn').textContent='Módulo '+C.numero;
-  document.getElementById('mt').textContent=C.titulo;
-  document.getElementById('md').textContent=C.descripcion;
-  const sc=document.getElementById('sc');
-  sc.innerHTML='';
-  C.secciones.forEach(s=>{
-    const el=document.createElement('div');
-    el.className='sec';el.id='s_'+s.id;
-    el.innerHTML='<div class="sh" onclick="tog(\''+s.id+'\')"><div class="sn">'+s.numero+'</div><div class="sw"><div class="st">'+s.titulo+'</div><div class="ss">'+(s.subtitulo||'')+'</div></div><div class="sg">▼</div></div><div class="scont"><div class="sb" id="b_'+s.id+'"></div></div>';
-    sc.appendChild(el);
-    const b=document.getElementById('b_'+s.id);
-    if(s.tipo==='lectura'){b.innerHTML='<div class="cr">'+s.contenido+'</div>'}
-    else if(s.tipo==='recurso'){b.innerHTML='<div style="text-align:center;padding:16px 0"><iframe class="ri" src="'+s.iframeUrl+'" allowfullscreen></iframe><div class="rt"><div class="rl">Transcripción</div><p style="font-size:13px">'+s.transcripcionTexto+'</p><a href="'+s.linkTranscripcion+'" class="rlink" target="_blank">'+s.labelTranscripcion+'</a></div></div>'}
-    else if(s.tipo==='quiz'){b.innerHTML=qHTML(s)}
-    else if(s.tipo==='referencias'){b.innerHTML='<ul class="rl-list">'+(s.referencias||[]).map(r=>'<li>'+r.texto+'</li>').join('')+'</ul>'}
-  });
-  setTimeout(initQ,0);
-}
-function qHTML(s){
-  let h='<div class="qc"><div class="qi-intro">'+s.quizIntro+'</div>';
-  (s.preguntas||[]).forEach((p,i)=>{h+='<div class="qi" id="qi_'+p.id+'"><div class="qn">Pregunta '+(i+1)+'</div><div class="qt">'+p.pregunta+'</div><div id="qc_'+p.id+'"></div><div class="fb" id="fb_'+p.id+'"></div></div>'});
-  return h+'</div>';
-}
-function initQ(){
-  C.secciones.forEach(s=>{
-    (s.preguntas||[]).forEach(p=>{
-      const d=document.getElementById('qc_'+p.id);if(!d)return;
-      if(p.tipo==='multiple-choice'){
-        d.innerHTML='<div class="ao">'+(p.opciones||[]).map(o=>'<label class="opt"><input type="radio" name="'+p.id+'" value="'+o.id+'" onchange="val(\''+p.id+'\',\''+o.id+'\',\'mc\')"><span>'+o.texto+'</span></label>').join('')+'</div>';
-      }else if(p.tipo==='verdadero-falso'){
-        d.innerHTML='<div class="ao"><label class="opt"><input type="radio" name="'+p.id+'" value="true" onchange="val(\''+p.id+'\',\'true\',\'vf\')"><span>Verdadero</span></label><label class="opt"><input type="radio" name="'+p.id+'" value="false" onchange="val(\''+p.id+'\',\'false\',\'vf\')"><span>Falso</span></label></div>';
-      }else{
-        d.innerHTML='<input type="text" class="ti" placeholder="Escribe tu respuesta..." onchange="val(\''+p.id+'\',this.value,\'txt\')">';
-      }
-    });
-  });
-}
-function tog(id){document.getElementById('s_'+id).classList.toggle('active')}
-function val(pid,resp,tipo){
-  const all=C.secciones.flatMap(s=>s.preguntas||[]);
-  const p=all.find(q=>q.id===pid);if(!p)return;
-  R[pid]=resp;
-  const fb=document.getElementById('fb_'+pid);
-  const qi=document.getElementById('qi_'+pid);
-  let ok=p.esRespuestaAbierta||(tipo==='vf'?(resp==='true')===p.respuestaCorrecta:resp===p.respuestaCorrecta);
-  fb.className='fb show '+(ok?'ok':'info');
-  fb.textContent=(ok?'✓ ':'')+p.feedback;
-  if(ok)qi.classList.add('answered');
-  const total=C.secciones.flatMap(s=>s.preguntas||[]).length;
-  document.getElementById('pf').style.width=(total?Object.keys(R).length/total*100:0)+'%';
-}
-init();
-<\/script>
-</body>
-</html>`;
+window.publishModule=function(){
+  if(!CFG.token){showMsg('bld-alerts','al-d','❌ Configura tus credenciales primero.');return;}
+  var fn=g('pub-fn');
+  if(!fn.endsWith('.html')){showMsg('bld-alerts','al-w','⚠️ El archivo debe terminar en .html');return;}
+  doPublish(fn,collect());
+};
+
+async function doPublish(fn,data){
+  spin('Generando HTML...');
+  var html=buildHTML(data);
+  spin('Subiendo a GitHub...');
+  try{
+    var sha=null;
+    try{var ex=await ghGet('repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+fn);sha=ex.sha;}catch(e){}
+    await ghPut(fn,html,'Publicar '+fn,sha);
+    spin('Actualizando registro...');
+    var reg=await getRegistry();
+    var url='https://'+CFG.owner+'.github.io/'+CFG.repo+'/'+fn;
+    var ifr='<iframe src="'+url+'" style="width:100%;height:100vh;border:none;display:block;"></iframe>';
+    var entry={filename:fn,numero:data.numero,titulo:data.titulo,author:g('m-aut')||'Sin especificar',url:url,iframeCode:ifr,publishedAt:new Date().toISOString()};
+    var mods=reg.modules;var idx=mods.findIndex(function(m){return m.filename===fn;});
+    if(idx>=0)mods[idx]=entry;else mods.push(entry);
+    await saveRegistry(mods,reg.sha);
+    stopSpin();
+    document.getElementById('pub-res').innerHTML='<div class="result"><div class="result-t">✅ ¡Módulo publicado!</div><p style="font-size:13px;color:#065f46;margin-bottom:6px">URL del módulo:</p><div class="url-box">'+url+'</div><p style="font-size:13px;color:#065f46;margin:10px 0 5px">Código iframe para Canvas (RCE → HTML):</p><div class="code-box" id="res-ifr"></div><div class="bg" style="margin-top:10px"><button class="btn btn-sm btn-p" onclick="copyEl(\'res-ifr\',this)">📋 Copiar iframe para Canvas</button><a href="'+url+'" target="_blank" class="btn btn-sm">🔗 Ver módulo</a></div><p style="font-size:11px;color:#6ee7b7;margin-top:8px">⏱️ GitHub Pages tarda 1-3 min en actualizar.</p></div>';
+    document.getElementById('res-ifr').textContent=ifr;
+  }catch(e){stopSpin();showMsg('bld-alerts','al-d','❌ Error: '+e.message);}
 }
 
-// ================================================
-// GITHUB API
-// ================================================
-async function ghGet(path) {
-  const r = await fetch(`https://api.github.com/${path}`, {
-    headers: {'Authorization': `token ${state.config.token}`, 'Accept': 'application/vnd.github.v3+json'}
-  });
-  if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
-  return r.json();
+function buildHTML(d){
+  var safe=JSON.stringify(d,null,2).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
+  var col=d.color||'#0066cc';
+  var css='*{margin:0;padding:0;box-sizing:border-box}\n:root{--p:'+col+';--s:#10b981;--li:#f8fafc;--g:#64748b;--dk:#1e293b;--b:#e2e8f0}\nbody{font-family:"Segoe UI",-apple-system,sans-serif;color:var(--dk);background:var(--li);line-height:1.6}\n.mc{max-width:900px;margin:0 auto;padding:40px 20px}\n.mh{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,.1);margin-bottom:24px;border-left:6px solid var(--p)}\n.mn{display:inline-block;background:var(--p);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:10px}\n.mt{font-size:28px;font-weight:700;margin-bottom:10px}.md{color:var(--g);font-size:14px}\n.ps{background:#fff;padding:16px 24px;border-radius:10px;margin-bottom:24px}\n.pl{font-size:11px;font-weight:600;color:var(--g);margin-bottom:8px;text-transform:uppercase}\n.pb{width:100%;height:6px;background:var(--b);border-radius:3px;overflow:hidden}\n.pf{height:100%;background:var(--p);width:0%;transition:width .4s ease}\n.sc{display:flex;flex-direction:column;gap:12px}\n.sec{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07)}\n.sec.completed{border-left:4px solid var(--s)}\n.sh{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none;transition:background .2s}\n.sh:hover{background:var(--li)}\n.sn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--p);color:#fff;border-radius:8px;font-weight:700;font-size:15px;flex-shrink:0}\n.sec.completed .sn{background:var(--s)}.sw{flex:1}\n.st{font-size:16px;font-weight:600;margin-bottom:2px}.ss{font-size:12px;color:var(--g)}\n.sg{font-size:20px;color:var(--g);transition:transform .3s;flex-shrink:0}\n.sec.active .sg{transform:rotate(180deg);color:var(--p)}\n.scont{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--b)}\n.sec.active .scont{max-height:3000px}.sb{padding:24px}\n.cr{line-height:1.8}.cr p{margin-bottom:14px}.cr ul,.cr ol{margin-left:20px;margin-bottom:14px}.cr li{margin-bottom:6px}\n.ri{width:100%;min-height:480px;border:1px solid var(--b);border-radius:8px;margin-bottom:12px}\n.rt{background:var(--li);padding:14px;border-radius:8px;border-left:4px solid var(--p);margin-top:12px}\n.rl{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}\n.rlink{display:inline-block;margin-top:12px;padding:10px 20px;background:var(--p);color:#fff;text-decoration:none;border-radius:7px;font-size:13px;font-weight:600}\n.qc{display:flex;flex-direction:column;gap:20px}\n.qi-intro{background:var(--p);color:#fff;padding:20px;border-radius:8px;font-size:13px}\n.qi{background:var(--li);padding:20px;border-radius:8px;border:2px solid transparent;transition:all .3s}\n.qi.answered{border-color:var(--s);background:#f0fdf4}\n.qn{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}\n.qt{font-size:15px;font-weight:600;margin-bottom:14px}\n.ao{display:flex;flex-direction:column;gap:10px}\n.opt{display:flex;align-items:center;padding:10px 14px;background:#fff;border:2px solid var(--b);border-radius:7px;cursor:pointer;gap:10px;transition:all .2s}\n.opt:hover{border-color:var(--p)}.opt input{accent-color:var(--p);width:17px;height:17px;cursor:pointer}\n.ti{width:100%;padding:10px 14px;border:2px solid var(--b);border-radius:7px;font-size:13px;font-family:inherit}\n.ti:focus{outline:none;border-color:var(--p)}\n.fb{margin-top:10px;padding:10px 14px;border-radius:7px;font-size:13px;display:none}\n.fb.show{display:block}\n.fb.ok{background:rgba(16,185,129,.1);border-left:4px solid var(--s);color:#047857}\n.fb.info{background:rgba(0,102,204,.1);border-left:4px solid var(--p);color:#004a99}\n.rl-list{list-style:none;padding:0}\n.rl-list li{padding:10px 0;border-bottom:1px solid var(--b);font-size:13px;line-height:1.6}\n.rl-list li:last-child{border-bottom:none}\n.mf{text-align:center;padding:24px;color:var(--g);font-size:11px;margin-top:32px}\n@media(max-width:640px){.mc{padding:16px}.mh{padding:20px}.mt{font-size:22px}}';
+  var modJS='var C=JSON.parse(document.getElementById("mc_data").textContent);var R={};function init(){var mn=document.getElementById("mn"),mt=document.getElementById("mt"),md=document.getElementById("md"),sc=document.getElementById("sc");if(mn)mn.textContent="M\u00f3dulo "+C.numero;if(mt)mt.textContent=C.titulo;if(md)md.textContent=C.descripcion;if(!sc)return;sc.innerHTML="";C.secciones.forEach(function(s){var el=document.createElement("div");el.className="sec";el.id="s_"+s.id;el.innerHTML="\\u003cdiv class=\\"sh\\" onclick=\\"tog(\'"+s.id+"\')\\"\\u003e\\u003cdiv class=\\"sn\\"\\u003e"+s.numero+"\\u003c/div\\u003e\\u003cdiv class=\\"sw\\"\\u003e\\u003cdiv class=\\"st\\"\\u003e"+s.titulo+"\\u003c/div\\u003e\\u003cdiv class=\\"ss\\"\\u003e"+(s.subtitulo||"")+"\\u003c/div\\u003e\\u003c/div\\u003e\\u003cdiv class=\\"sg\\"\\u003e\u25bc\\u003c/div\\u003e\\u003c/div\\u003e\\u003cdiv class=\\"scont\\"\\u003e\\u003cdiv class=\\"sb\\" id=\\"b_"+s.id+"\\"\\u003e\\u003c/div\\u003e\\u003c/div\\u003e";sc.appendChild(el);var b=document.getElementById("b_"+s.id);if(s.tipo==="lectura"){b.innerHTML="\\u003cdiv class=\\"cr\\"\\u003e"+s.contenido+"\\u003c/div\\u003e";}else if(s.tipo==="recurso"){b.innerHTML="\\u003cdiv style=\\"text-align:center;padding:16px 0\\"\\u003e\\u003ciframe class=\\"ri\\" src=\\""+s.iframeUrl+"\\" allowfullscreen\\u003e\\u003c/iframe\\u003e\\u003cdiv class=\\"rt\\"\\u003e\\u003cdiv class=\\"rl\\"\\u003eTranscripci\u00f3n\\u003c/div\\u003e\\u003cp style=\\"font-size:13px\\"\\u003e"+s.transcripcionTexto+"\\u003c/p\\u003e\\u003ca href=\\""+s.linkTranscripcion+"\\" class=\\"rlink\\" target=\\"_blank\\"\\u003e"+s.labelTranscripcion+"\\u003c/a\\u003e\\u003c/div\\u003e\\u003c/div\\u003e";}else if(s.tipo==="quiz"){b.innerHTML=qHTML(s);}else if(s.tipo==="referencias"){b.innerHTML="\\u003cul class=\\"rl-list\\"\\u003e"+(s.referencias||[]).map(function(r){return"\\u003cli\\u003e"+r.texto+"\\u003c/li\\u003e";}).join("")+"\\u003c/ul\\u003e";}});setTimeout(initQ,0);}function qHTML(s){var h="\\u003cdiv class=\\"qc\\"\\u003e\\u003cdiv class=\\"qi-intro\\"\\u003e"+s.quizIntro+"\\u003c/div\\u003e";(s.preguntas||[]).forEach(function(p,i){h+="\\u003cdiv class=\\"qi\\" id=\\"qi_"+p.id+"\\"\\u003e\\u003cdiv class=\\"qn\\"\\u003ePregunta "+(i+1)+"\\u003c/div\\u003e\\u003cdiv class=\\"qt\\"\\u003e"+p.pregunta+"\\u003c/div\\u003e\\u003cdiv id=\\"qc_"+p.id+"\\"\\u003e\\u003c/div\\u003e\\u003cdiv class=\\"fb\\" id=\\"fb_"+p.id+"\\"\\u003e\\u003c/div\\u003e\\u003c/div\\u003e";});return h+"\\u003c/div\\u003e";}function initQ(){C.secciones.forEach(function(s){(s.preguntas||[]).forEach(function(p){var d=document.getElementById("qc_"+p.id);if(!d)return;if(p.tipo==="multiple-choice"){d.innerHTML="\\u003cdiv class=\\"ao\\"\\u003e"+(p.opciones||[]).map(function(o){return"\\u003clabel class=\\"opt\\"\\u003e\\u003cinput type=\\"radio\\" name=\\""+p.id+"\\" value=\\""+o.id+"\\" onchange=\\"val(\'"+p.id+"\',\'"+o.id+"\',\'mc\')\\"\\u003e\\u003cspan\\u003e"+o.texto+"\\u003c/span\\u003e\\u003c/label\\u003e";}).join("")+"\\u003c/div\\u003e";}else if(p.tipo==="verdadero-falso"){d.innerHTML="\\u003cdiv class=\\"ao\\"\\u003e\\u003clabel class=\\"opt\\"\\u003e\\u003cinput type=\\"radio\\" name=\\""+p.id+"\\" value=\\"true\\" onchange=\\"val(\'"+p.id+"\',\'true\',\'vf\')\\"\\u003e\\u003cspan\\u003eVerdadero\\u003c/span\\u003e\\u003c/label\\u003e\\u003clabel class=\\"opt\\"\\u003e\\u003cinput type=\\"radio\\" name=\\""+p.id+"\\" value=\\"false\\" onchange=\\"val(\'"+p.id+"\',\'false\',\'vf\')\\"\\u003e\\u003cspan\\u003eFalso\\u003c/span\\u003e\\u003c/label\\u003e\\u003c/div\\u003e";}else{d.innerHTML="\\u003cinput type=\\"text\\" class=\\"ti\\" placeholder=\\"Escribe tu respuesta...\\" onchange=\\"val(\'"+p.id+"\',this.value,\'txt\')\\"\\u003e";}});});}function tog(id){document.getElementById("s_"+id).classList.toggle("active");}function val(pid,resp,tipo){var all=C.secciones.reduce(function(a,s){return a.concat(s.preguntas||[]);},[]);var p=null;for(var i=0;i\\u003call.length;i++){if(all[i].id===pid){p=all[i];break;}}if(!p)return;R[pid]=resp;var fb=document.getElementById("fb_"+pid),qi=document.getElementById("qi_"+pid);var ok=p.esRespuestaAbierta||(tipo==="vf"?(resp==="true")===p.respuestaCorrecta:resp===p.respuestaCorrecta);fb.className="fb show "+(ok?"ok":"info");fb.textContent=(ok?"\u2713 ":"")+p.feedback;if(ok&&qi)qi.classList.add("answered");var total=C.secciones.reduce(function(a,s){return a+(s.preguntas||[]).length;},0);var pf=document.getElementById("pf");if(pf)pf.style.width=(total?Object.keys(R).length/total*100:0)+"%";}init();';
+  var sc='scr'+'ipt';
+  return '<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>M\u00f3dulo '+d.numero+' - '+d.titulo+'</title>\n<style>\n'+css+'\n</style>\n</head>\n<body>\n<div class="mc">\n<div class="mh">\n<div class="mn" id="mn"></div>\n<h1 class="mt" id="mt"></h1>\n<p class="md" id="md"></p>\n</div>\n<div class="ps"><div class="pl">Progreso del m\u00f3dulo</div><div class="pb"><div class="pf" id="pf"></div></div></div>\n<div class="sc" id="sc"></div>\n<div class="mf">'+d.footer+'</div>\n</div>\n<'+sc+' type="application/json" id="mc_data">'+safe+'</'+sc+'>\n<'+sc+'>\n'+modJS+'\n</'+sc+'>\n</body>\n</html>';
 }
 
-async function ghPut(path, content, message, sha) {
-  const encoded = btoa(unescape(encodeURIComponent(content)));
-  const body = {message, content: encoded};
-  if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${state.config.owner}/${state.config.repo}/contents/${path}`, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `token ${state.config.token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/vnd.github.v3+json'
-    },
-    body: JSON.stringify(body)
-  });
-  if (!r.ok) {
-    const err = await r.json();
-    throw new Error(err.message || 'Error al subir archivo');
-  }
-  return r.json();
+window.loadAdmin=function(){
+  if(!CFG.token){document.getElementById('adm-list').innerHTML='<div class="empty"><div class="empty-i">🔑</div><p>Configura tus credenciales primero.</p></div>';return;}
+  spin('Cargando módulos...');
+  getRegistry().then(function(reg){
+    stopSpin();var mods=reg.modules;
+    if(!mods.length){document.getElementById('adm-list').innerHTML='<div class="empty"><div class="empty-i">📦</div><p>Sin módulos publicados aún.</p></div>';return;}
+    document.getElementById('adm-list').innerHTML=mods.map(function(m,i){
+      return '<div class="mod-item"><div class="mod-hd"><div><div class="mod-t">'+m.titulo+'</div><div class="mod-m">Por '+m.author+' · '+new Date(m.publishedAt).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+'</div></div><span class="mod-badge">M\u00f3dulo '+m.numero+'</span></div><p style="font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;margin-bottom:4px">C\u00f3digo iframe para Canvas:</p><div class="code-box" id="ai'+i+'"></div><div class="bg" style="margin-top:8px"><button class="btn btn-sm btn-p" onclick="copyEl(\'ai'+i+'\',this)">📋 Copiar iframe</button><a href="'+m.url+'" target="_blank" class="btn btn-sm">🔗 Ver m\u00f3dulo</a></div></div>';
+    }).join('');
+    mods.forEach(function(m,i){var el=document.getElementById('ai'+i);if(el)el.textContent=m.iframeCode;});
+  }).catch(function(e){stopSpin();showMsg('adm-alerts','al-d','❌ Error: '+e.message);});
+};
+
+async function ghGet(path){
+  var r=await fetch('https://api.github.com/'+path,{headers:{Authorization:'token '+CFG.token,Accept:'application/vnd.github.v3+json'}});
+  if(!r.ok)throw new Error('GitHub '+r.status);return r.json();
+}
+async function ghPut(path,content,msg,sha){
+  var enc=btoa(unescape(encodeURIComponent(content)));var body={message:msg,content:enc};if(sha)body.sha=sha;
+  var r=await fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+path,{method:'PUT',headers:{Authorization:'token '+CFG.token,'Content-Type':'application/json',Accept:'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+  if(!r.ok){var e=await r.json();throw new Error(e.message||'Error al subir');}return r.json();
+}
+async function getRegistry(){
+  try{
+    var f=await ghGet('repos/'+CFG.owner+'/'+CFG.repo+'/contents/_registry.json');
+    var data=JSON.parse(decodeURIComponent(escape(atob(f.content.replace(/\n/g,'')))));
+    return{modules:data.modules||[],sha:f.sha};
+  }catch(e){return{modules:[],sha:null};}
+}
+async function saveRegistry(modules,sha){
+  return ghPut('_registry.json',JSON.stringify({modules:modules,updatedAt:new Date().toISOString()},null,2),'Update registry',sha);
 }
 
-async function getRegistry() {
-  try {
-    const file = await ghGet(`repos/${state.config.owner}/${state.config.repo}/contents/_registry.json`);
-    const content = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
-    return {modules: content.modules || [], sha: file.sha};
-  } catch(e) {
-    return {modules: [], sha: null};
-  }
-}
-
-async function saveRegistry(modules, sha) {
-  const content = JSON.stringify({modules, updatedAt: new Date().toISOString()}, null, 2);
-  return ghPut('_registry.json', content, 'Update registry', sha);
-}
-
-// ================================================
-// ADMIN
-// ================================================
-async function loadRegistry() {
-  if (!state.config.token) {
-    document.getElementById('modules-list').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔑</div>
-        <p>Configura tus credenciales de GitHub primero.</p>
-      </div>`;
-    return;
-  }
-  showLoading('Cargando módulos...');
-  try {
-    const {modules} = await getRegistry();
-    hideLoading();
-    if (!modules.length) {
-      document.getElementById('modules-list').innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📦</div>
-          <p>Aún no has publicado ningún módulo. ¡Ve al Constructor y crea el primero!</p>
-        </div>`;
-      return;
-    }
-    document.getElementById('modules-list').innerHTML = `
-      <div class="modules-grid">
-        ${modules.map((m, idx) => `
-          <div class="module-item">
-            <div class="module-item-header">
-              <div>
-                <div class="module-item-title">${m.titulo}</div>
-                <div class="module-item-meta">Por ${m.author} · ${new Date(m.publishedAt).toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'})}</div>
-              </div>
-              <span class="module-num-badge">Módulo ${m.numero}</span>
-            </div>
-            <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;margin-bottom:4px">Código iframe para Canvas:</div>
-            <div class="iframe-code" id="ic_${idx}"></div>
-            <div class="module-actions">
-              <button class="btn btn-sm btn-primary" onclick="copyById('ic_${idx}',this)">📋 Copiar iframe para Canvas</button>
-              <a href="${m.url}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
-            </div>
-          </div>`).join('')}
-      </div>`;
-    // Set iframe codes safely as textContent
-    modules.forEach((m, idx) => {
-      const el = document.getElementById('ic_' + idx);
-      if (el) el.textContent = m.iframeCode;
-    });
-  } catch(e) {
-    hideLoading();
-    showAlert('admin-alerts', 'danger', 'Error al cargar módulos: ' + e.message);
-  }
-}
-
-// ================================================
-// UTILITIES
-// ================================================
-function v(id) {
-  const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
-
-function showLoading(text) {
-  document.getElementById('loadingText').textContent = text;
-  document.getElementById('loadingOverlay').classList.remove('hidden');
-}
-
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.add('hidden');
-}
-
-function showAlert(containerId, type, msg) {
-  const icons = {success:'✅', danger:'❌', warning:'⚠️', info:'ℹ️'};
-  document.getElementById(containerId).innerHTML = `
-    <div class="alert alert-${type}">
-      <span class="alert-icon">${icons[type]}</span>
-      <span>${msg}</span>
-    </div>`;
-  setTimeout(() => {
-    const el = document.getElementById(containerId);
-    if (el) el.innerHTML = '';
-  }, 6000);
-}
-
-function copyLastIframe(btn) {
-  const code = window._lastIframeCode || '';
-  navigator.clipboard.writeText(code).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✅ ¡Copiado!';
-    setTimeout(() => btn.textContent = orig, 2000);
-  });
-}
-
-function copyById(elId, btn) {
-  const el = document.getElementById(elId);
-  const text = el ? el.textContent : '';
-  navigator.clipboard.writeText(text).then(() => {
-    if (btn) {
-      const orig = btn.textContent;
-      btn.textContent = '✅ ¡Copiado!';
-      setTimeout(() => btn.textContent = orig, 2000);
-    }
-  });
-}
-
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = event.target.textContent;
-    event.target.textContent = '✅ ¡Copiado!';
-    setTimeout(() => event.target.textContent = orig, 2000);
-  });
-}
+function g(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function spin(t){document.getElementById('ov-txt').textContent=t;document.getElementById('ov').classList.remove('hidden');}
+function stopSpin(){document.getElementById('ov').classList.add('hidden');}
+function showMsg(id,cls,html){document.getElementById(id).innerHTML='<div class="al '+cls+'">'+html+'</div>';setTimeout(function(){var e=document.getElementById(id);if(e)e.innerHTML='';},6000);}
+window.copyEl=function(id,btn){
+  var el=document.getElementById(id);if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(function(){var orig=btn.textContent;btn.textContent='✅ ¡Copiado!';setTimeout(function(){btn.textContent=orig;},2000);});
+};
+})();
 </script>
 </body>
 </html>
