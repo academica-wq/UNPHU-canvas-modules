@@ -922,8 +922,9 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;color:var(--dk);background:
 <div class="sc" id="sc"></div>
 <div class="mf">${d.footer}</div>
 </div>
+<script type="application/json" id="mc_data">${cfg}</script>
 <script>
-const C=${cfg};
+const C=JSON.parse(document.getElementById('mc_data').textContent);
 let R={};
 function init(){
   document.getElementById('mn').textContent='Módulo '+C.numero;
