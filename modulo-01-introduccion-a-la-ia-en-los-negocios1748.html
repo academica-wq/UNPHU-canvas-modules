@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 1 – Introducción a la IA en los negocios</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#8CC63E;--s:#10b981;--li:#f8fafc;--g:#64748b;--dk:#1e293b;--b:#e2e8f0}
+body{font-family:"Segoe UI",-apple-system,sans-serif;color:var(--dk);background:var(--li);line-height:1.6}
+.mc{max-width:900px;margin:0 auto;padding:40px 20px}
+.mh{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,.1);margin-bottom:24px;border-left:6px solid var(--p)}
+.mn{display:inline-block;background:var(--p);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:10px}
+.mt{font-size:28px;font-weight:700;margin-bottom:10px}.md{color:var(--g);font-size:14px}
+.ps{background:#fff;padding:16px 24px;border-radius:10px;margin-bottom:24px}
+.pl{font-size:11px;font-weight:600;color:var(--g);margin-bottom:8px;text-transform:uppercase}
+.pb{width:100%;height:6px;background:var(--b);border-radius:3px;overflow:hidden}
+.pf{height:100%;background:var(--p);width:0%;transition:width .4s ease}
+.sc{display:flex;flex-direction:column;gap:12px}
+.sec{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.sec.completed{border-left:4px solid var(--s)}
+.sh{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none;transition:background .2s}
+.sh:hover{background:var(--li)}
+.sn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--p);color:#fff;border-radius:8px;font-weight:700;font-size:15px;flex-shrink:0}
+.sec.completed .sn{background:var(--s)}.sw{flex:1}
+.st{font-size:16px;font-weight:600;margin-bottom:2px}.ss{font-size:12px;color:var(--g)}
+.sg{font-size:20px;color:var(--g);transition:transform .3s;flex-shrink:0}
+.sec.active .sg{transform:rotate(180deg);color:var(--p)}
+.scont{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--b)}
+.sec.active .scont{max-height:3000px}.sb{padding:24px}
+.cr{line-height:1.8}.cr p{margin-bottom:14px}.cr ul,.cr ol{margin-left:20px;margin-bottom:14px}.cr li{margin-bottom:6px}
+.ri{width:100%;min-height:480px;border:1px solid var(--b);border-radius:8px;margin-bottom:12px}
+.rt{background:var(--li);padding:14px;border-radius:8px;border-left:4px solid var(--p);margin-top:12px}
+.rl{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
+.rlink{display:inline-block;margin-top:12px;padding:10px 20px;background:var(--p);color:#fff;text-decoration:none;border-radius:7px;font-size:13px;font-weight:600}
+.qc{display:flex;flex-direction:column;gap:20px}
+.qi-intro{background:var(--p);color:#fff;padding:20px;border-radius:8px;font-size:13px}
+.qi{background:var(--li);padding:20px;border-radius:8px;border:2px solid transparent;transition:all .3s}
+.qi.answered{border-color:var(--s);background:#f0fdf4}
+.qn{font-size:11px;font-weight:600;color:var(--p);text-transform:uppercase;margin-bottom:6px}
+.qt{font-size:15px;font-weight:600;margin-bottom:14px}
+.ao{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;padding:10px 14px;background:#fff;border:2px solid var(--b);border-radius:7px;cursor:pointer;gap:10px;transition:all .2s}
+.opt:hover{border-color:var(--p)}.opt input{accent-color:var(--p);width:17px;height:17px;cursor:pointer}
+.ti{width:100%;padding:10px 14px;border:2px solid var(--b);border-radius:7px;font-size:13px;font-family:inherit}
+.ti:focus{outline:none;border-color:var(--p)}
+.fb{margin-top:10px;padding:10px 14px;border-radius:7px;font-size:13px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(16,185,129,.1);border-left:4px solid var(--s);color:#047857}
+.fb.info{background:rgba(0,102,204,.1);border-left:4px solid var(--p);color:#004a99}
+.rl-list{list-style:none;padding:0}
+.rl-list li{padding:10px 0;border-bottom:1px solid var(--b);font-size:13px;line-height:1.6}
+.rl-list li:last-child{border-bottom:none}
+.mf{text-align:center;padding:24px;color:var(--g);font-size:11px;margin-top:32px}
+@media(max-width:640px){.mc{padding:16px}.mh{padding:20px}.mt{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="mc">
+<div class="mh">
+<div class="mn" id="mn"></div>
+<h1 class="mt" id="mt"></h1>
+<p class="md" id="md"></p>
+</div>
+<div class="ps"><div class="pl">Progreso del módulo</div><div class="pb"><div class="pf" id="pf"></div></div></div>
+<div class="sc" id="sc"></div>
+<div class="mf">Los recursos aquí publicados son exclusivos para uso educativo y no tienen fines de lucro.</div>
+</div>
+<script type="application/json" id="mc_data">{
+  "numero": 1,
+  "titulo": "Introducción a la IA en los negocios",
+  "descripcion": "Explora los fundamentos de la inteligencia artificial y su impacto en las organizaciones modernas. El módulo presenta conceptos básicos, tendencias y aplicaciones empresariales.",
+  "color": "#8CC63E",
+  "footer": "Los recursos aquí publicados son exclusivos para uso educativo y no tienen fines de lucro.",
+  "secciones": [
+    {
+      "id": "s1",
+      "numero": 1,
+      "titulo": "¿Qué es la inteligencia artificial?",
+      "subtitulo": "Conceptos básicos y aplicaciones empresariales",
+      "tipo": "lectura",
+      "contenido": "<p>La inteligencia artificial (IA) es una rama de la tecnología que busca desarrollar sistemas capaces de realizar tareas que normalmente requieren inteligencia humana, como analizar información, reconocer patrones, generar contenido o tomar decisiones.</p>\n\n<p>En los negocios, la IA se utiliza para automatizar procesos, mejorar la experiencia del cliente, analizar grandes volúmenes de datos y optimizar la toma de decisiones.</p>\n\n<p>Actualmente, organizaciones de distintos sectores utilizan herramientas de IA para actividades como:</p>\n\n<ul>\n  <li>Automatización de atención al cliente mediante chatbots</li>\n  <li>Análisis predictivo de ventas y comportamiento de consumidores</li>\n  <li>Generación de contenido para marketing y comunicación</li>\n  <li>Optimización de procesos administrativos y operativos</li>\n</ul>\n\n<p>La adopción de IA representa oportunidades importantes para incrementar la eficiencia y la innovación, aunque también plantea desafíos relacionados con la ética, privacidad y transformación del trabajo.</p>"
+    },
+    {
+      "id": "s2",
+      "numero": 2,
+      "titulo": "¿Cómo está transformando la IA a las empresas?",
+      "subtitulo": "Impacto de la inteligencia artificial en los modelos de negocio",
+      "tipo": "lectura",
+      "contenido": "<p>La inteligencia artificial está transformando la forma en que las organizaciones operan, toman decisiones y se relacionan con sus clientes. Empresas de distintos sectores utilizan IA para mejorar la eficiencia, reducir costos y desarrollar nuevos productos y servicios.</p>\n\n<p>Uno de los principales beneficios de la IA es su capacidad para procesar grandes cantidades de información en poco tiempo. Esto permite identificar patrones, predecir comportamientos y generar recomendaciones útiles para la toma de decisiones.</p>\n\n<p>Algunas aplicaciones frecuentes de IA en los negocios incluyen:</p>\n\n<ul>\n  <li>Recomendaciones personalizadas en plataformas digitales</li>\n  <li>Automatización de procesos administrativos</li>\n  <li>Asistentes virtuales y chatbots para servicio al cliente</li>\n  <li>Predicción de ventas y análisis de tendencias</li>\n</ul>\n\n<p>Además de las oportunidades, las organizaciones también enfrentan retos importantes relacionados con privacidad de datos, ética y adaptación del talento humano a nuevas formas de trabajo.</p>\n\n<p>Comprender el impacto de la inteligencia artificial es clave para que las empresas puedan aprovechar su potencial de forma estratégica y responsable.</p>"
+    },
+    {
+      "id": "s3",
+      "numero": 3,
+      "titulo": "IA en los negocios",
+      "subtitulo": "Aplicaciones reales y transformación empresarial",
+      "tipo": "recurso",
+      "iframeUrl": "https://www.youtube.com/embed/2ePf9rue1Ao",
+      "transcripcionTexto": "Este video presenta una introducción práctica al impacto de la inteligencia artificial en el entorno empresarial. Se explican conceptos básicos de IA, ejemplos de automatización, análisis de datos y generación de contenido, así como oportunidades y desafíos para las organizaciones.",
+      "linkTranscripcion": "https://www.youtube.com/watch?v=2ePf9rue1Ao",
+      "labelTranscripcion": "Ver video completo"
+    },
+    {
+      "id": "s4",
+      "numero": 4,
+      "titulo": "¿Cómo vamos?",
+      "subtitulo": "Evalúa tu comprensión sobre IA en los negocios",
+      "tipo": "quiz",
+      "quizIntro": "Responde las siguientes preguntas para verificar tu comprensión sobre los conceptos básicos de inteligencia artificial y sus aplicaciones en el entorno empresarial.",
+      "preguntas": [
+        {
+          "id": "q1_s4",
+          "pregunta": "¿Cuál de las siguientes opciones representa un uso común de IA en los negocios?",
+          "tipo": "multiple-choice",
+          "feedback": "La automatización de atención al cliente es uno de los usos más comunes de la inteligencia artificial en las empresas, especialmente mediante chatbots y asistentes virtuales.",
+          "opciones": [
+            {
+              "id": "a",
+              "texto": "* Automatización de atención al cliente"
+            },
+            {
+              "id": "b",
+              "texto": "* Impresión de documentos físicos"
+            },
+            {
+              "id": "c",
+              "texto": "* Reparación de hardware manual"
+            },
+            {
+              "id": "d",
+              "texto": "* Construcción de edificios"
+            }
+          ],
+          "respuestaCorrecta": "a"
+        },
+        {
+          "id": "q2_s4",
+          "pregunta": "La inteligencia artificial puede ayudar a analizar grandes volúmenes de datos para apoyar la toma de decisiones.",
+          "tipo": "verdadero-falso",
+          "feedback": "La afirmación es verdadera. Una de las principales ventajas de la IA es su capacidad para procesar y analizar información de manera más eficiente.",
+          "respuestaCorrecta": true
+        },
+        {
+          "id": "q3_s4",
+          "pregunta": "Menciona un ejemplo de cómo una empresa podría utilizar inteligencia artificial para mejorar sus procesos o servicios.",
+          "tipo": "texto",
+          "feedback": "Tu respuesta permite identificar cómo la inteligencia artificial puede aplicarse en contextos reales de negocio. La clave es reconocer cómo la IA puede generar eficiencia, automatización o una mejor experiencia para clientes y usuarios.",
+          "esRespuestaAbierta": true
+        }
+      ]
+    }
+  ]
+}</script>
+<script>
+var C=JSON.parse(document.getElementById("mc_data").textContent);
+var R={};
+function cel(tag,cls){var e=document.createElement(tag);if(cls)e.className=cls;return e;}
+function init(){
+  var mn=document.getElementById("mn");
+  var mt=document.getElementById("mt");
+  var md=document.getElementById("md");
+  var sc=document.getElementById("sc");
+  if(mn)mn.textContent="Módulo "+C.numero;
+  if(mt)mt.textContent=C.titulo;
+  if(md)md.textContent=C.descripcion;
+  if(!sc)return;
+  sc.innerHTML="";
+  C.secciones.forEach(function(s){
+    var sec=cel("div","sec");sec.id="s_"+s.id;
+    var sh=cel("div","sh");
+    sh.addEventListener("click",function(){tog(s.id);});
+    var sn=cel("div","sn");sn.textContent=s.numero;
+    var sw=cel("div","sw");
+    var st=cel("div","st");st.textContent=s.titulo;
+    var ss=cel("div","ss");ss.textContent=s.subtitulo||"";
+    var sg=cel("div","sg");sg.textContent="▼";
+    sw.appendChild(st);sw.appendChild(ss);
+    sh.appendChild(sn);sh.appendChild(sw);sh.appendChild(sg);
+    var scont=cel("div","scont");
+    var sb=cel("div","sb");sb.id="b_"+s.id;
+    scont.appendChild(sb);
+    sec.appendChild(sh);sec.appendChild(scont);
+    sc.appendChild(sec);
+    renderBody(s,sb);
+  });
+}
+function renderBody(s,b){
+  if(s.tipo==="lectura"){
+    var d=cel("div","cr");d.innerHTML=s.contenido;b.appendChild(d);
+  }else if(s.tipo==="recurso"){
+    var wrap=cel("div");wrap.style.textAlign="center";wrap.style.padding="16px 0";
+    var ifr=document.createElement("iframe");
+    ifr.className="ri";ifr.src=s.iframeUrl;ifr.allowFullscreen=true;
+    ifr.setAttribute("allowfullscreen","");
+    var rt=cel("div","rt");
+    var rl=cel("div","rl");rl.textContent="Transcripción";
+    var rdesc=cel("p");rdesc.style.fontSize="13px";rdesc.textContent=s.transcripcionTexto;
+    var ra=document.createElement("a");
+    ra.className="rlink";ra.href=s.linkTranscripcion;ra.target="_blank";
+    ra.textContent=s.labelTranscripcion||"Ver transcripción";
+    rt.appendChild(rl);rt.appendChild(rdesc);rt.appendChild(ra);
+    wrap.appendChild(ifr);wrap.appendChild(rt);b.appendChild(wrap);
+  }else if(s.tipo==="quiz"){
+    var qc=cel("div","qc");
+    var intro=cel("div","qi-intro");intro.textContent=s.quizIntro;
+    qc.appendChild(intro);
+    (s.preguntas||[]).forEach(function(p,i){
+      var qi=cel("div","qi");qi.id="qi_"+p.id;
+      var qn=cel("div","qn");qn.textContent="Pregunta "+(i+1);
+      var qt=cel("div","qt");qt.textContent=p.pregunta;
+      var qcont=cel("div");qcont.id="qc_"+p.id;
+      var fb=cel("div","fb");fb.id="fb_"+p.id;
+      qi.appendChild(qn);qi.appendChild(qt);qi.appendChild(qcont);qi.appendChild(fb);
+      qc.appendChild(qi);
+      renderQuestion(p,qcont);
+    });
+    b.appendChild(qc);
+  }else if(s.tipo==="referencias"){
+    var ul=document.createElement("ul");ul.className="rl-list";
+    (s.referencias||[]).forEach(function(r){
+      var li=document.createElement("li");li.innerHTML=r.texto;ul.appendChild(li);
+    });
+    b.appendChild(ul);
+  }
+}
+function renderQuestion(p,cont){
+  if(p.tipo==="multiple-choice"){
+    var ao=cel("div","ao");
+    (p.opciones||[]).forEach(function(o){
+      var lbl=document.createElement("label");lbl.className="opt";
+      var inp=document.createElement("input");
+      inp.type="radio";inp.name=p.id;inp.value=o.id;
+      inp.addEventListener("change",function(){val(p.id,o.id,"mc");});
+      var sp=document.createElement("span");sp.textContent=o.texto;
+      lbl.appendChild(inp);lbl.appendChild(sp);ao.appendChild(lbl);
+    });
+    cont.appendChild(ao);
+  }else if(p.tipo==="verdadero-falso"){
+    var ao=cel("div","ao");
+    [["true","Verdadero"],["false","Falso"]].forEach(function(pair){
+      var lbl=document.createElement("label");lbl.className="opt";
+      var inp=document.createElement("input");
+      inp.type="radio";inp.name=p.id;inp.value=pair[0];
+      inp.addEventListener("change",function(){val(p.id,pair[0],"vf");});
+      var sp=document.createElement("span");sp.textContent=pair[1];
+      lbl.appendChild(inp);lbl.appendChild(sp);ao.appendChild(lbl);
+    });
+    cont.appendChild(ao);
+  }else{
+    var ti=document.createElement("input");
+    ti.type="text";ti.className="ti";ti.placeholder="Escribe tu respuesta...";
+    ti.addEventListener("change",function(){val(p.id,ti.value,"txt");});
+    cont.appendChild(ti);
+  }
+}
+function tog(id){
+  document.getElementById("s_"+id).classList.toggle("active");
+}
+function val(pid,resp,tipo){
+  var all=C.secciones.reduce(function(a,s){return a.concat(s.preguntas||[]);},[]);
+  var p=null;
+  for(var i=0;i<all.length;i++){if(all[i].id===pid){p=all[i];break;}}
+  if(!p)return;
+  R[pid]=resp;
+  var fb=document.getElementById("fb_"+pid);
+  var qi=document.getElementById("qi_"+pid);
+  var ok=p.esRespuestaAbierta||(tipo==="vf"?(resp==="true")===p.respuestaCorrecta:resp===p.respuestaCorrecta);
+  if(fb){fb.className="fb show "+(ok?"ok":"info");fb.textContent=(ok?"✓ ":"")+p.feedback;}
+  if(ok&&qi)qi.classList.add("answered");
+  var total=C.secciones.reduce(function(a,s){return a+(s.preguntas||[]).length;},0);
+  var pf=document.getElementById("pf");
+  if(pf)pf.style.width=(total?Object.keys(R).length/total*100:0)+"%";
+}
+init();
+</script>
+</body>
+</html>
