@@ -764,19 +764,22 @@ async function publishModule() {
     hideLoading();
 
     // Show success
+    window._lastIframeCode = iframeCode;
+    window._lastGhPagesUrl = ghPagesUrl;
     document.getElementById('publish-result').innerHTML = `
       <div class="publish-result">
         <div class="publish-result-title">✅ ¡Módulo publicado correctamente!</div>
         <p style="font-size:13px;color:#065f46;margin-bottom:8px">URL del módulo (GitHub Pages):</p>
         <div class="url-display">${ghPagesUrl}</div>
         <p style="font-size:13px;color:#065f46;margin:12px 0 6px">Código para pegar en Canvas (RCE → HTML):</p>
-        <div class="iframe-code">${iframeCode}</div>
+        <div class="iframe-code" id="iframeCodeDisplay"></div>
         <div class="btn-group" style="margin-top:12px">
-          <button class="btn btn-sm" onclick="copyText('${iframeCode.replace(/'/g,"\\'")}')">📋 Copiar iframe</button>
+          <button class="btn btn-sm btn-primary" onclick="copyLastIframe(this)">📋 Copiar iframe para Canvas</button>
           <a href="${ghPagesUrl}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
         </div>
-        <p style="font-size:11px;color:#6ee7b7;margin-top:10px">⏱️ GitHub Pages puede tardar 1-3 minutos en actualizar.</p>
+        <p style="font-size:11px;color:#6ee7b7;margin-top:10px">⏱️ GitHub Pages puede tardar 1-3 minutos en actualizar. Recarga la URL del módulo si ves 404.</p>
       </div>`;
+    document.getElementById('iframeCodeDisplay').textContent = iframeCode;
   } catch(e) {
     hideLoading();
     showAlert('builderAlerts', 'danger', 'Error al publicar: ' + e.message);
@@ -1052,7 +1055,7 @@ async function loadRegistry() {
     }
     document.getElementById('modules-list').innerHTML = `
       <div class="modules-grid">
-        ${modules.map(m => `
+        ${modules.map((m, idx) => `
           <div class="module-item">
             <div class="module-item-header">
               <div>
@@ -1062,14 +1065,18 @@ async function loadRegistry() {
               <span class="module-num-badge">Módulo ${m.numero}</span>
             </div>
             <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;margin-bottom:4px">Código iframe para Canvas:</div>
-            <div class="iframe-code">${m.iframeCode}</div>
+            <div class="iframe-code" id="ic_${idx}"></div>
             <div class="module-actions">
-              <button class="btn btn-sm btn-primary" onclick="copyText('${m.iframeCode.replace(/'/g,"\\'")}')">📋 Copiar iframe</button>
+              <button class="btn btn-sm btn-primary" onclick="copyById('ic_${idx}',this)">📋 Copiar iframe para Canvas</button>
               <a href="${m.url}" target="_blank" class="btn btn-sm">🔗 Ver módulo</a>
-              <button class="btn btn-sm" onclick="copyText('${m.url}')">🔗 Copiar URL</button>
             </div>
           </div>`).join('')}
       </div>`;
+    // Set iframe codes safely as textContent
+    modules.forEach((m, idx) => {
+      const el = document.getElementById('ic_' + idx);
+      if (el) el.textContent = m.iframeCode;
+    });
   } catch(e) {
     hideLoading();
     showAlert('admin-alerts', 'danger', 'Error al cargar módulos: ' + e.message);
@@ -1104,6 +1111,27 @@ function showAlert(containerId, type, msg) {
     const el = document.getElementById(containerId);
     if (el) el.innerHTML = '';
   }, 6000);
+}
+
+function copyLastIframe(btn) {
+  const code = window._lastIframeCode || '';
+  navigator.clipboard.writeText(code).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ ¡Copiado!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function copyById(elId, btn) {
+  const el = document.getElementById(elId);
+  const text = el ? el.textContent : '';
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✅ ¡Copiado!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+  });
 }
 
 function copyText(text) {
